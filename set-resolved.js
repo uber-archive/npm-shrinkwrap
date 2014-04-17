@@ -21,7 +21,6 @@ function defaultCreateUri(name, version) {
      - {privateRegistryUri}
 
 */
-
 function setResolved(opts, callback) {
     if (typeof opts === 'string') {
         opts = { dirname: opts };

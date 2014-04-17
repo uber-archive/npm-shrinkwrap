@@ -1,10 +1,8 @@
-var NPM = require('npm');
-
 var setResolved = require('./set-resolved.js');
 var trimFrom = require('./trim-and-sort-shrinkwrap.js');
 
 function npmShrinkwrap(dir, callback) {
-    NPM.load({
+    getNPM().load({
         prefix: dir
     }, onnpm);
 
@@ -34,3 +32,16 @@ function npmShrinkwrap(dir, callback) {
 }
 
 module.exports = npmShrinkwrap;
+
+/*  you cannot call `npm.load()` twice with different prefixes.
+    
+    The only fix is to clear the entire node require cache and
+      get a fresh duplicate copy of the entire npm library
+*/
+function getNPM() {
+    Object.keys(require.cache).forEach(function (key) {
+        delete require.cache[key];
+    });
+    var NPM = require('npm');
+    return NPM;
+}
