@@ -50,6 +50,15 @@ The edge case npm doesn't handle is if you change the tag in
   your node_modules tree is valid irregardless of what tag it
   is.
 
+### Consistently set a `resolved` field.
+
+NPM shrinkwrap serializes your node_modules folder. Depending
+  on whether you installed a module from cache or not it will
+  either have or not have a resolved field.
+
+`npm-shrinkwrap` will put a `resolved` field in for everything
+  in your shrinkwrap.
+
 ## Example
 
 ```js
