@@ -1,5 +1,10 @@
+var ValidationError = require('error/validation');
+var find = require('array-find');
+var template = require('string-template');
+
 var setResolved = require('./set-resolved.js');
 var trimFrom = require('./trim-and-sort-shrinkwrap.js');
+var verifyGit = require('./verify-git.js');
 
 function npmShrinkwrap(dir, callback) {
     getNPM().load({
@@ -31,7 +36,39 @@ function npmShrinkwrap(dir, callback) {
             return callback(err);
         }
 
-        trimFrom(dir, callback);
+        trimFrom(dir, ontrim);
+    }
+
+    function ontrim(err) {
+        if (err) {
+            return callback(err);
+        }
+
+        verifyGit(dir, onverify);
+    }
+
+    function onverify(err, errors) {
+        if (err) {
+            return callback(err);
+        }
+
+        if (errors.length === 0) {
+            return callback(null);
+        }
+
+        var error = ValidationError(errors);
+        var invalid = find(errors, function (error) {
+            return error.type === 'invalid.git.version';
+        });
+
+        if (invalid) {
+            var msg = 'Problems were encountered\n' +
+                'Please correct and try again\n' +
+                'invalid: {name}@{actual} {dirname}/node_modules/{name}';
+            error.message = template(msg, invalid);
+        }
+
+        callback(error);
     }
 }
 

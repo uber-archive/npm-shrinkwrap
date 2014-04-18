@@ -1,7 +1,7 @@
 var path = require('path');
 var fs = require('fs');
 var template = require('string-template');
-var safeJsonParse = require('safe-json-parse');
+var readJSON = require('read-json');
 var url = require('url');
 
 var NPM_URI = 'https://registry.npmjs.org/{name}/-/{name}-{version}.tgz';
@@ -30,13 +30,7 @@ function setResolved(opts, callback) {
     var createUri = opts.createUri || defaultCreateUri;
     var registries = opts.registries || ['registry.npmjs.org'];
 
-    fs.readFile(shrinkwrapFile, 'utf8', function (err, file) {
-        if (err) {
-            return callback(err);
-        }
-
-        safeJsonParse(file, onjson);
-    });
+    readJSON(shrinkwrapFile, onjson);
 
     function onjson(err, json) {
         if (err) {

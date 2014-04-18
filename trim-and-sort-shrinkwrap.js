@@ -4,6 +4,13 @@ var url = require('url');
 var safeJsonParse = require('safe-json-parse');
 var parallel = require('run-parallel');
 var sortedObject = require('sorted-object');
+var TypedError = require('error/typed');
+var readJSON = require('read-json');
+
+var EmptyFile = TypedError({
+    message: 'npm-shrinkwrap must not be empty',
+    type: 'npm-shrinkwrap.missing'
+});
 
 module.exports = trimFrom;
 
@@ -28,8 +35,7 @@ function trimFrom(opts, callback) {
             }
 
             if (file === '') {
-                err = new Error('npm-shrinkwrap must not be empty');
-                return callback(err);
+                return callback(EmptyFile());
             }
 
             safeJsonParse(file, function (err, json) {
@@ -112,26 +118,20 @@ function trimFrom(opts, callback) {
 
 function fixPackage(dirname, callback) {
     var packageJsonFile = path.join(dirname, 'package.json');
-    fs.readFile(packageJsonFile, 'utf8', function (err, file) {
+    readJSON(packageJsonFile, function (err, json) {
         if (err) {
             return callback(err);
         }
 
-        safeJsonParse(file, function (err, json) {
-            if (err) {
-                return callback(err);
-            }
+        if (json.dependencies) {
+            json.dependencies = sortedObject(json.dependencies);
+        }
+        if (json.devDependencies) {
+            json.devDependencies = sortedObject(json.devDependencies);
+        }
 
-            if (json.dependencies) {
-                json.dependencies = sortedObject(json.dependencies);
-            }
-            if (json.devDependencies) {
-                json.devDependencies = sortedObject(json.devDependencies);
-            }
-
-            fs.writeFile(packageJsonFile,
-                JSON.stringify(json, null, 2), callback);
-        });
+        fs.writeFile(packageJsonFile,
+            JSON.stringify(json, null, 2), callback);
     });
 }
 
