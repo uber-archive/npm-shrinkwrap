@@ -126,3 +126,113 @@ test('create shrinkwrap for git dep', fixtures(__dirname, {
         });
     });
 }));
+
+test('error on removed module', fixtures(__dirname, {
+    proj: moduleFixture('proj', '0.1.0', {
+        dependencies: {},
+        'node_modules': {
+            'foo': moduleFixture('foo', '1.0.0')
+        }
+    })
+}, function (assert) {
+    // debugger;
+    npmShrinkwrap(PROJ, function (err) {
+        assert.ok(err);
+
+        assert.notEqual(err.message.indexOf(
+            'extraneous: foo@1.0.0'), -1);
+
+        assert.end();
+    });
+}));
+
+test('error on additional module', fixtures(__dirname, {
+    proj: moduleFixture('proj', '0.1.0', {
+        dependencies: { 'foo': '1.0.0' },
+        'node_modules': {}
+    })
+}, function (assert) {
+    npmShrinkwrap(PROJ, function (err) {
+        assert.ok(err);
+
+        assert.notEqual(err.message.indexOf(
+            'missing: foo@1.0.0'), -1);
+
+        assert.end();
+    });
+}));
+
+test('error on invalid module', fixtures(__dirname, {
+    proj: moduleFixture('proj', '0.1.0', {
+        dependencies: { 'foo': '1.0.1' },
+        'node_modules': {
+            'foo': moduleFixture('foo', '1.0.0')
+        }
+    })
+}, function (assert) {
+    npmShrinkwrap(PROJ, function (err) {
+        assert.ok(err);
+
+        assert.notEqual(err.message.indexOf(
+            'invalid: foo@1.0.0'), -1);
+
+        assert.end();
+    });
+}));
+
+test('error on removed GIT module', fixtures(__dirname, {
+    proj: moduleFixture('proj', '0.1.0', {
+        dependencies: {},
+        'node_modules': {
+            'foo': gitModuleFixture('foo', '1.0.0')
+        }
+    })
+}, function (assert) {
+    // debugger;
+    npmShrinkwrap(PROJ, function (err) {
+        assert.ok(err);
+
+        assert.notEqual(err.message.indexOf(
+            'extraneous: foo@1.0.0'), -1);
+
+        assert.end();
+    });
+}));
+
+test('error on additional GIT module', fixtures(__dirname, {
+    proj: moduleFixture('proj', '0.1.0', {
+        dependencies: {
+            'foo': 'git://github.com:uber/foo#v1.0.0'
+        },
+        'node_modules': {}
+    })
+}, function (assert) {
+    npmShrinkwrap(PROJ, function (err) {
+        assert.ok(err);
+
+        assert.notEqual(err.message.indexOf(
+            'missing: foo@git://github.com:uber/foo#v1.0.0'), -1);
+
+        assert.end();
+    });
+}));
+
+test('error on invalid GIT module', fixtures(__dirname, {
+    proj: moduleFixture('proj', '0.1.0', {
+        dependencies: {
+            'foo': 'git://github.com:uber/foo#v1.0.1'
+        },
+        'node_modules': {
+            'foo': gitModuleFixture('foo', '1.0.0')
+        }
+    })
+}, function (assert) {
+    npmShrinkwrap(PROJ, function (err) {
+        assert.ok(err);
+
+        assert.notEqual(err ? err.message.indexOf(
+            'invalid: foo@1.0.0') : -1, -1);
+
+        assert.end();
+    });
+}));

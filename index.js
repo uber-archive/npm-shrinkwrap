@@ -11,6 +11,10 @@ function npmShrinkwrap(dir, callback) {
             return callback(err);
         }
 
+        // when running under `npm test` depth is set to 1
+        // reset it to a high number like 100
+        npm.config.set('depth', 100);
+
         npm.commands.shrinkwrap({}, true, onshrinkwrap);
     }
 
