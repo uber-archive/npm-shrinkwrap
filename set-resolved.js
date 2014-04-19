@@ -29,6 +29,7 @@ function setResolved(opts, callback) {
     var shrinkwrapFile = path.join(opts.dirname, 'npm-shrinkwrap.json');
     var createUri = opts.createUri || defaultCreateUri;
     var registries = opts.registries || ['registry.npmjs.org'];
+    var rewriteResolved = opts.rewriteResolved || null;
 
     readJSON(shrinkwrapFile, onjson);
 
@@ -55,6 +56,10 @@ function setResolved(opts, callback) {
     function fixResolved(json, name) {
         if (json.from && !json.resolved) {
             computeResolved(json, name);
+        }
+
+        if (rewriteResolved) {
+            json.resolved = rewriteResolved(json.resolved);
         }
 
         if (json.dependencies) {

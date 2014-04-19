@@ -6,9 +6,13 @@ var setResolved = require('./set-resolved.js');
 var trimFrom = require('./trim-and-sort-shrinkwrap.js');
 var verifyGit = require('./verify-git.js');
 
-function npmShrinkwrap(dir, callback) {
+function npmShrinkwrap(opts, callback) {
+    if (typeof opts === 'string') {
+        opts = { dirname: opts };
+    }
+
     getNPM().load({
-        prefix: dir
+        prefix: opts.dirname
     }, onnpm);
 
     function onnpm(err, npm) {
@@ -28,7 +32,7 @@ function npmShrinkwrap(dir, callback) {
             return callback(err);
         }
 
-        setResolved(dir, onResolved);
+        setResolved(opts, onResolved);
     }
 
     function onResolved(err) {
@@ -36,7 +40,7 @@ function npmShrinkwrap(dir, callback) {
             return callback(err);
         }
 
-        trimFrom(dir, ontrim);
+        trimFrom(opts, ontrim);
     }
 
     function ontrim(err) {
@@ -44,7 +48,7 @@ function npmShrinkwrap(dir, callback) {
             return callback(err);
         }
 
-        verifyGit(dir, onverify);
+        verifyGit(opts, onverify);
     }
 
     function onverify(err, errors) {
