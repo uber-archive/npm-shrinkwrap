@@ -12,7 +12,7 @@
     "email": "raynos2@gmail.com"
   },
   "dependencies": {
-    "npm": "^1.4.7",
+    "npm": "~1.4.7",
     "string-template": "^0.1.3",
     "safe-json-parse": "^1.0.1",
     "run-parallel": "^0.3.0",

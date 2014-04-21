@@ -13,9 +13,9 @@ function npmShrinkwrap(opts, callback) {
 
     getNPM().load({
         prefix: opts.dirname
-    }, onnpm);
+    }, verifyTree);
 
-    function onnpm(err, npm) {
+    function verifyTree(err, npm) {
         if (err) {
             return callback(err);
         }
@@ -23,6 +23,51 @@ function npmShrinkwrap(opts, callback) {
         // when running under `npm test` depth is set to 1
         // reset it to a high number like 100
         npm.config.set('depth', 100);
+
+        npm.commands.ls([], true, onls);
+
+        function onls(err, _, pkginfo) {
+            if (err) {
+                return callback(err);
+            }
+
+            if (pkginfo.problems) {
+                var error = NPMError(pkginfo.problems);
+                return callback(error);
+            }
+
+            verifyGit(opts, onverify);
+        }
+
+        function onverify(err, errors) {
+            if (err) {
+                return callback(err);
+            }
+
+            if (errors.length === 0) {
+                return onnpm(null, npm);
+            }
+
+            var error = ValidationError(errors);
+            var invalid = find(errors, function (error) {
+                return error.type === 'invalid.git.version';
+            });
+
+            if (invalid) {
+                var msg = 'Problems were encountered\n' +
+                    'Please correct and try again\n' +
+                    'invalid: {name}@{actual} {dirname}/node_modules/{name}';
+                error.message = template(msg, invalid);
+            }
+
+            callback(error);
+        }
+    }
+
+    function onnpm(err, npm) {
+        if (err) {
+            return callback(err);
+        }
 
         npm.commands.shrinkwrap({}, true, onshrinkwrap);
     }
@@ -40,39 +85,7 @@ function npmShrinkwrap(opts, callback) {
             return callback(err);
         }
 
-        trimFrom(opts, ontrim);
-    }
-
-    function ontrim(err) {
-        if (err) {
-            return callback(err);
-        }
-
-        verifyGit(opts, onverify);
-    }
-
-    function onverify(err, errors) {
-        if (err) {
-            return callback(err);
-        }
-
-        if (errors.length === 0) {
-            return callback(null);
-        }
-
-        var error = ValidationError(errors);
-        var invalid = find(errors, function (error) {
-            return error.type === 'invalid.git.version';
-        });
-
-        if (invalid) {
-            var msg = 'Problems were encountered\n' +
-                'Please correct and try again\n' +
-                'invalid: {name}@{actual} {dirname}/node_modules/{name}';
-            error.message = template(msg, invalid);
-        }
-
-        callback(error);
+        trimFrom(opts, callback);
     }
 }
 
@@ -89,4 +102,9 @@ function getNPM() {
     });
     var NPM = require('npm');
     return NPM;
+}
+
+function NPMError(messages) {
+    return new Error('Problems were encountered\n' +
+        'Please correct and try again.\n' + messages.join('\n'));
 }
