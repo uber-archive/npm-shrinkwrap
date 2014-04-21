@@ -11,8 +11,11 @@ function npmShrinkwrap(opts, callback) {
         opts = { dirname: opts };
     }
 
+    var _warnings = null;
+
     getNPM().load({
-        prefix: opts.dirname
+        prefix: opts.dirname,
+        loglevel: 'error'
     }, verifyTree);
 
     function verifyTree(err, npm) {
@@ -32,7 +35,7 @@ function npmShrinkwrap(opts, callback) {
             }
 
             if (pkginfo.problems) {
-                var error = NPMError(pkginfo.problems);
+                var error = NPMError(pkginfo);
                 return callback(error);
             }
 
@@ -60,6 +63,21 @@ function npmShrinkwrap(opts, callback) {
                 error.message = template(msg, invalid);
             }
 
+            var types = errors.reduce(function (acc, e) {
+                if (acc.indexOf(e.type) === -1) {
+                    acc.push(e.type);
+                }
+
+                return acc;
+            }, []);
+
+            if (opts.warnOnNotSemver && types.length === 1 &&
+                types[0] === 'gitlink.tag.notsemver'
+            ) {
+                _warnings = error.errors;
+                return onnpm(null, npm);
+            }
+
             callback(error);
         }
     }
@@ -85,7 +103,15 @@ function npmShrinkwrap(opts, callback) {
             return callback(err);
         }
 
-        trimFrom(opts, callback);
+        trimFrom(opts, ontrim);
+    }
+
+    function ontrim(err) {
+        if (err) {
+            return callback(err);
+        }
+
+        callback(null, _warnings ? _warnings : []);
     }
 }
 
@@ -104,7 +130,10 @@ function getNPM() {
     return NPM;
 }
 
-function NPMError(messages) {
-    return new Error('Problems were encountered\n' +
-        'Please correct and try again.\n' + messages.join('\n'));
+function NPMError(pkginfo) {
+    var err = new Error('Problems were encountered\n' +
+        'Please correct and try again.\n' +
+        pkginfo.problems.join('\n'));
+    err.pkginfo = pkginfo;
+    return err;
 }
