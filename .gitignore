@@ -8,7 +8,6 @@
 *.o
 *.so
 *.node
-bin/*
 
 # Node Waf Byproducts #
 #######################
