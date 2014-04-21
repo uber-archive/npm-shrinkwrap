@@ -3,6 +3,7 @@
 var parseArgs = require('minimist');
 var path = require('path');
 
+var installModule = require('./install.js');
 var printHelp = require('./help.js');
 var shrinkwrap = require('../index.js');
 var formatters = require('./formatters.js');
@@ -14,7 +15,9 @@ if (require.main === module) {
 }
 
 function main(opts) {
-    if (opts.h || opts.help) {
+    var command = opts._[0];
+
+    if (opts.h || opts.help || command === 'help') {
         return printHelp(opts);
     }
 
@@ -23,6 +26,18 @@ function main(opts) {
 
     opts.warnOnNotSemver = opts.warnOnNotSemver ?
         opts.warnOnNotSemver : true;
+
+    opts.cmd = opts.cmd || 'npm-shrinkwrap';
+
+    if (command === 'install') {
+        return installModule(opts, function (err) {
+            if (err) {
+                throw err;
+            }
+
+            console.log('added %s to package.json', opts.cmd);
+        });
+    }
 
     shrinkwrap(opts, function (err, warnings) {
         if (err) {

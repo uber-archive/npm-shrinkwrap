@@ -6,6 +6,26 @@ Verifies your `package.json` and `node_modules` are in sync.
 
 Basically like `npm shrinkwrap` but better
 
+Options:
+    --dirname   sets the directory location of the package.json
+
+ - `--dirname` defaults to `process.cwd()`
+
 ## `{cmd} --help`
 
 Prints this message
+
+## `{cmd} install`
+
+Will write a `shrinkwrap` script to your `package.json` file.
+
+```json
+{
+    "scripts": {
+        "shrinkwrap": "{cmd}"
+    }
+}
+```
+
+Options:
+    --dirname   sets the directory location of the package.json

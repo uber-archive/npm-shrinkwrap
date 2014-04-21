@@ -26,3 +26,15 @@ npm-shrinkwrap/trim-and-sort-shrinkwrap :=
 
 npm-shrinkwrap/verify-git :=
     (ShrinkwrapOptions, Callback<Error, void>) => void
+
+npm-shrinkwrap/bin/cli := (opts: ShrinkwrapOptions & {
+    help: Boolean,
+    install: Boolean,
+    onwarn: Function<warnings: Array<TypedError>>,
+    onerror: Function<Error | TypedError>,
+    cmd: String,
+    silent: Boolean,
+    _: Array<additionalArg: String>,
+    packageVersion: String,
+    moduleName: String
+}) => void
