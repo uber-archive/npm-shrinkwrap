@@ -102,10 +102,6 @@ function main(opts, callback) {
         fileA = 'HEAD';
     }
 
-    if (!fileA || !fileB) {
-        throw new Error('npm-shrinkwrap diff oldFile newFile');
-    }
-
     opts.color = (opts.color === 'false') ? false : opts.color;
     opts.depth = 'depth' in opts ? opts.depth : 0;
     var cwd = opts.dirname || process.cwd();
