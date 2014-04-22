@@ -94,6 +94,14 @@ function main(opts, callback) {
     var fileA = opts._[0];
     var fileB = opts._[1];
 
+    if (!fileB) {
+        fileB = 'npm-shrinkwrap.json';
+    }
+
+    if (!fileA) {
+        fileA = 'HEAD';
+    }
+
     if (!fileA || !fileB) {
         throw new Error('npm-shrinkwrap diff oldFile newFile');
     }
