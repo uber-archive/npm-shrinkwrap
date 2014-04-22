@@ -49,7 +49,6 @@
   "bin": {
     "npm-shrinkwrap": "./bin/cli.js"
   },
-  "private": true,
   "engine": {
     "node": ">= 0.8.x"
   }
