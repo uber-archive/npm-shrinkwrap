@@ -16,7 +16,7 @@ if (require.main === module) {
 }
 
 function main(opts) {
-    var command = opts._.shift() || 'help';
+    var command = opts._.shift();
 
     if (opts.h || opts.help || command === 'help') {
         return printHelp(opts);

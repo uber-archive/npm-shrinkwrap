@@ -1,10 +1,13 @@
 var ValidationError = require('error/validation');
 var find = require('array-find');
 var template = require('string-template');
+var path = require('path');
+var readJSON = require('read-json');
 
 var setResolved = require('./set-resolved.js');
 var trimFrom = require('./trim-and-sort-shrinkwrap.js');
 var verifyGit = require('./verify-git.js');
+var walkDeps = require('./walk-shrinkwrap.js');
 
 function npmShrinkwrap(opts, callback) {
     if (typeof opts === 'string') {
@@ -111,7 +114,32 @@ function npmShrinkwrap(opts, callback) {
             return callback(err);
         }
 
-        callback(null, _warnings ? _warnings : []);
+        var fileName = path.join(opts.dirname, 'npm-shrinkwrap.json');
+        readJSON(fileName, onfinalwrap);
+    }
+
+    function onfinalwrap(err, shrinkwrap) {
+        if (err) {
+            return callback(err);
+        }
+
+        var warnings = _warnings ? _warnings : [];
+
+        if (opts.validators && Array.isArray(opts.validators) &&
+            opts.validators.length !== 0
+        ) {
+            walkDeps(shrinkwrap, function (node, key) {
+                var warns = opts.validators.map(function (f) {
+                    return f(node, key);
+                }).filter(Boolean);
+
+                if (warns.length) {
+                    warnings = warnings.concat(warns);
+                }
+            });
+        }
+
+        callback(null, warnings);
     }
 }
 
