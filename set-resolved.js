@@ -58,7 +58,7 @@ function setResolved(opts, callback) {
             computeResolved(json, name);
         }
 
-        if (rewriteResolved) {
+        if (rewriteResolved && json.resolved) {
             json.resolved = rewriteResolved(json.resolved);
         }
 
