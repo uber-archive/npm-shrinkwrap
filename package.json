@@ -12,20 +12,44 @@
     "email": "raynos2@gmail.com"
   },
   "dependencies": {
+    "array-find": "^0.1.1",
+    "error": "^3.0.0",
+    "json-diff": "^0.3.1",
+    "minimist": "0.0.8",
+    "msee": "^0.1.1",
+    "npm": "~1.4.7",
+    "read-json": "0.0.0",
+    "run-parallel": "^0.3.0",
+    "safe-json-parse": "^1.0.1",
+    "semver": "^2.2.1",
+    "sorted-object": "^1.0.0",
+    "string-template": "^0.1.3"
   },
   "devDependencies": {
-    "tape": "^2.10.2",
-    "jshint": "2.4.2",
+    "fixtures-fs": "^1.0.2",
     "istanbul": "~0.2.4",
+    "jshint": "2.4.2",
+    "pre-commit": "0.0.4",
     "tap-spec": "~0.1.4",
-    "pre-commit": "0.0.4"
+    "tape": "^2.10.2"
   },
   "scripts": {
-    "test": "npm run jshint && istanbul --print=none cover test/index.js | tspec && istanbul report text",
-    "jshint": "jshint --verbose --exclude-path .gitignore .",
+    "test": "npm run jshint -s && NODE_ENV=test node test/index.js | tap-spec",
+    "unit-test": "NODE_ENV=test node test/index.js | tap-spec",
+    "jshint-pre-commit": "jshint --verbose $(git diff --cached --name-only | grep '\\.js$')",
+    "jshint": "jshint --verbose .",
     "cover": "istanbul cover --report none --print detail test/index.js",
-    "view-cover": "istanbul report html && open ./coverage/index.html"
+    "view-cover": "istanbul report html && open ./coverage/index.html",
+    "travis": "npm run cover -s && istanbul report lcov && ((cat coverage/lcov.info | coveralls) || exit 0)"
   },
+  "pre-commit": [
+    "jshint-pre-commit",
+    "unit-test"
+  ],
+  "bin": {
+    "npm-shrinkwrap": "./bin/cli.js"
+  },
+  "private": true,
   "engine": {
     "node": ">= 0.8.x"
   }
