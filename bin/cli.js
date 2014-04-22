@@ -90,12 +90,8 @@ function printWarnings(err, formatters) {
     }
 
     err.errors.forEach(function (err) {
-        var format = formatters[err.type];
+        var format = formatters[err.type] || formatters.default;
 
-        if (!format) {
-            console.error(err.message);
-        } else {
-            console.error(format(err));
-        }
+        console.error(format(err));
     });
 }
