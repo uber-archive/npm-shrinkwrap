@@ -9,13 +9,15 @@ var shrinkwrap = require('../index.js');
 var formatters = require('./formatters.js');
 var diffShrinkwrap = require('./diff.js');
 
+main.printWarnings = printWarnings;
+
 module.exports = main;
 
 if (require.main === module) {
     main(parseArgs(process.argv.slice(2)));
 }
 
-function main(opts) {
+function main(opts, callback) {
     var command = opts._.shift();
 
     if (opts.h || opts.help || command === 'help') {
@@ -54,17 +56,25 @@ function main(opts) {
                 return opts.onerror(err);
             }
 
+            if (callback) {
+                return callback(err);
+            }
+
             printWarnings(err);
             console.log('something went wrong. Did not write ' +
                 'npm-shrinkwrap.json');
             return process.exit(1);
         }
 
+        if (callback) {
+            return callback(null, warnings);
+        }
+
         if (warnings) {
             if (opts.onwarn) {
                 opts.onwarn(warnings);
             } else {
-                printWarnings({ errors: warnings });
+                printWarnings({ errors: warnings }, formatters);
             }
         }
 
@@ -74,7 +84,7 @@ function main(opts) {
     });
 }
 
-function printWarnings(err) {
+function printWarnings(err, formatters) {
     if (!err.errors) {
         return console.error(err.message);
     }
