@@ -7,6 +7,7 @@ var installModule = require('./install.js');
 var printHelp = require('./help.js');
 var shrinkwrap = require('../index.js');
 var formatters = require('./formatters.js');
+var diffShrinkwrap = require('./diff.js');
 
 module.exports = main;
 
@@ -15,7 +16,7 @@ if (require.main === module) {
 }
 
 function main(opts) {
-    var command = opts._[0];
+    var command = opts._.shift() || 'help';
 
     if (opts.h || opts.help || command === 'help') {
         return printHelp(opts);
@@ -36,6 +37,14 @@ function main(opts) {
             }
 
             console.log('added %s to package.json', opts.cmd);
+        });
+    } else if (command === 'diff') {
+        return diffShrinkwrap(opts, function (err, diff) {
+            if (err) {
+                throw err;
+            }
+
+            console.log(diff);
         });
     }
 

@@ -29,3 +29,23 @@ Will write a `shrinkwrap` script to your `package.json` file.
 
 Options:
     --dirname   sets the directory location of the package.json
+
+## `{cmd} diff [OldShaOrFile] [NewShaOrfile]`
+
+This will show a human readable for the shrinkwrap file.
+
+You can pass it either a path to a file or a git shaism.
+
+Example:
+
+`{cmd} diff HEAD npm-shrinkwrap.json`
+`{cmd} diff origin/master HEAD`
+
+Options:
+    --depth     configure the depth at which it prints
+    --short     when set it will print add/remove tersely
+    --dirname   configure which folder to run within
+
+ - `--depth` defaults to `0`
+ - `--short` defaults to `false`
+ - `--dirname` defaults to `process.cwd()`
