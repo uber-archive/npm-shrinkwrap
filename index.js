@@ -128,9 +128,9 @@ function npmShrinkwrap(opts, callback) {
         if (opts.validators && Array.isArray(opts.validators) &&
             opts.validators.length !== 0
         ) {
-            walkDeps(shrinkwrap, function (node, key) {
+            walkDeps(shrinkwrap, function (node, key, parent) {
                 var warns = opts.validators.map(function (f) {
-                    return f(node, key);
+                    return f(node, key, parent);
                 }).filter(Boolean);
 
                 if (warns.length) {
