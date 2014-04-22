@@ -48,6 +48,32 @@ The second is to just delete all `from` fields from the
   never used. However you can only delete some `from` fields, 
   not all.
 
+### Human readable `diff`
+
+When you run shrinkwrap and check it into git you have an
+  unreadable git diff.
+
+`npm-shrinkwrap` comes with an `npm-shrinkwrap diff` command.
+
+```sh
+npm-shrinkwrap diff master HEAD
+npm-shrinkwrap diff HEAD npm-shrinkwrap.json --short
+```
+
+You can use this command to print out a readable context 
+  specific diff of your shrinkwrap changes.
+
+### Custom shrinkwrap validators
+
+`npm-shrinkwrap` can be programmatically configured with an
+  array of `validators`.
+
+These `validators` run over every node in the shrinkwrap file
+  and can do assertions.
+
+Useful assertions are things like assertion all dependencies
+  point at your private registry instead of the public one.
+
 ## Example
 
 ```js
