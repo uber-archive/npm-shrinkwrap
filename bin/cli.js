@@ -60,7 +60,7 @@ function main(opts, callback) {
                 return callback(err);
             }
 
-            printWarnings(err);
+            printWarnings(err, formatters);
             console.log('something went wrong. Did not write ' +
                 'npm-shrinkwrap.json');
             return process.exit(1);
