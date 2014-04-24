@@ -103,9 +103,9 @@ function main(opts, callback) {
     }
 
     if (!("color" in opts)) {
-        opts.color = proces.stdout.isTTY;
+        opts.color = process.stdout.isTTY;
     } else if (opts.color === "false") {
-        opts.color = false
+        opts.color = false;
     }
 
     opts.depth = 'depth' in opts ? opts.depth : 0;
