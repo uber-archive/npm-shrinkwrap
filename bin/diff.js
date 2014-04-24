@@ -108,6 +108,10 @@ function main(opts, callback) {
         opts.color = false;
     }
 
+    if (("short" in opts)) {
+        opts.short = true;
+    }
+
     opts.depth = 'depth' in opts ? opts.depth : 0;
     var cwd = opts.dirname || process.cwd();
 
