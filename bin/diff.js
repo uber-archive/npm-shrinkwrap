@@ -102,7 +102,12 @@ function main(opts, callback) {
         fileA = 'HEAD';
     }
 
-    opts.color = (opts.color === 'false') ? false : opts.color;
+    if (!("color" in opts)) {
+        opts.color = proces.stdout.isTTY;
+    } else if (opts.color === "false") {
+        opts.color = false
+    }
+
     opts.depth = 'depth' in opts ? opts.depth : 0;
     var cwd = opts.dirname || process.cwd();
 
