@@ -108,7 +108,7 @@ function main(opts, callback) {
         opts.color = false;
     }
 
-    if (("short" in opts)) {
+    if (!("short" in opts)) {
         opts.short = true;
     }
 
