@@ -98,7 +98,7 @@ function trimFrom(opts, callback) {
             // we should always have `from` contain a git sha
             // because that's consistent
 
-            var shaIsm = uri.hash.slice(1);
+            var shaIsm = uri.hash && uri.hash.slice(1);
 
             // from does not have shaIsm. bail realy
             if (!shaIsm) {
@@ -106,7 +106,8 @@ function trimFrom(opts, callback) {
             }
 
             var resolvedUri = url.parse(resolved);
-            var resolveShaism = resolvedUri.hash.slice(1);
+            var resolveShaism = resolvedUri.hash &&
+                resolvedUri.hash.slice(1);
 
             // resolved does not have shaIsm. bail early
             if (!resolveShaism) {
