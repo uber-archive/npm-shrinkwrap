@@ -94,6 +94,31 @@ function trimFrom(opts, callback) {
         // if it's any other link, like `git`, `git+ssh` or a http
         // link to an arbitrary tarball then we cant remove it
         } else if (uri.protocol) {
+            // for resolve branches & shaisms to commit shas
+            // we should always have `from` contain a git sha
+            // because that's consistent
+
+            var shaIsm = uri.hash && uri.hash.slice(1);
+
+            // from does not have shaIsm. bail realy
+            if (!shaIsm) {
+                return value;
+            }
+
+            var resolvedUri = url.parse(resolved);
+            var resolveShaism = resolvedUri.hash &&
+                resolvedUri.hash.slice(1);
+
+            // resolved does not have shaIsm. bail early
+            if (!resolveShaism) {
+                return value;
+            }
+
+            // replace the from shaIsm with the resolved shaIsm
+            if (shaIsm !== resolveShaism) {
+                return value.replace(shaIsm, resolveShaism);
+            }
+
             return value;
         }
 

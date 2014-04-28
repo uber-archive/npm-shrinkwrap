@@ -3,6 +3,7 @@ var fs = require('fs');
 var template = require('string-template');
 var readJSON = require('read-json');
 var url = require('url');
+var sortedObject = require('sorted-object');
 
 var NPM_URI = 'https://registry.npmjs.org/{name}/-/{name}-{version}.tgz';
 
@@ -66,9 +67,10 @@ function setResolved(opts, callback) {
             Object.keys(json.dependencies).forEach(function (dep) {
                 fixResolved(json.dependencies[dep], dep);
             });
+            json.dependencies = sortedObject(json.dependencies);
         }
 
-        return json;
+        return sortedObject(json);
     }
 
     /*  look for `from` fields and set a `resolved` field next
