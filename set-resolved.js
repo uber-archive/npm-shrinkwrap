@@ -4,8 +4,17 @@ var template = require('string-template');
 var readJSON = require('read-json');
 var url = require('url');
 var sortedObject = require('sorted-object');
+var semver = require('semver');
+var TypedError = require('error/typed');
+
+var version = require('./package.json').version;
 
 var NPM_URI = 'https://registry.npmjs.org/{name}/-/{name}-{version}.tgz';
+var INVALID_VERSION = TypedError({
+    message: 'Using an older version of npm-shrinkwrap.\n' +
+        'Expected version {existing} but found {current}.\n' +
+        'To fix: please run `npm install npm-shrinkwrap@{existing}`\n'
+});
 
 module.exports = setResolved;
 
@@ -38,6 +47,17 @@ function setResolved(opts, callback) {
         if (err) {
             return callback(err);
         }
+
+        var existingVersion = json['npm-shrinkwrap-version'];
+
+        if (existingVersion && semver.gt(existingVersion, version)) {
+            return callback(INVALID_VERSION({
+                existing: existingVersion,
+                current: version
+            }));
+        }
+
+        json['npm-shrinkwrap-version'] = version;
 
         json = fixResolved(json);
 
