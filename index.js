@@ -136,7 +136,7 @@ function npmShrinkwrap(opts, callback) {
 
                 json = sortedObject(json);
                 var buf = JSON.stringify(json, null, 4);
-                fs.writeFile(fileName, buf, 'utf8', callback);
+                fs.writeFile(fileName, buf, 'utf8', onshrinkwrap);
             }
         }
     }
