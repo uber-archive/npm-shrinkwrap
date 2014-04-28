@@ -14,6 +14,24 @@ var EmptyFile = TypedError({
 
 module.exports = trimFrom;
 
+function recursiveSorted(json) {
+    if (!json) {
+        return json;
+    }
+
+    var deps = json.dependencies;
+    if (typeof deps === 'object' && deps !== null) {
+        json.dependencies = Object.keys(deps)
+            .reduce(function (acc, key) {
+                acc[key] = recursiveSorted(deps[key]);
+                return acc;
+            }, {});
+        json.dependencies = sortedObject(json.dependencies);
+    }
+
+    return sortedObject(json);
+}
+
 function trimFrom(opts, callback) {
     if (typeof opts === 'string') {
         opts = { dirname: opts };
@@ -43,9 +61,7 @@ function trimFrom(opts, callback) {
                     return callback(err);
                 }
 
-                if (json.dependencies) {
-                    json.dependencies = sortedObject(json.dependencies);
-                }
+                json = recursiveSorted(json);
 
                 fs.writeFile(shrinkwrapFile,
                     JSON.stringify(json, replacer, 2), callback);

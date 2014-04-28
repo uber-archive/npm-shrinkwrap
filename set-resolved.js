@@ -3,7 +3,6 @@ var fs = require('fs');
 var template = require('string-template');
 var readJSON = require('read-json');
 var url = require('url');
-var sortedObject = require('sorted-object');
 var semver = require('semver');
 var TypedError = require('error/typed');
 
@@ -87,10 +86,10 @@ function setResolved(opts, callback) {
             Object.keys(json.dependencies).forEach(function (dep) {
                 fixResolved(json.dependencies[dep], dep);
             });
-            json.dependencies = sortedObject(json.dependencies);
+            json.dependencies = json.dependencies;
         }
 
-        return sortedObject(json);
+        return json;
     }
 
     /*  look for `from` fields and set a `resolved` field next
