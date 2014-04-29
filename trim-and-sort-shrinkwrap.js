@@ -14,6 +14,30 @@ var EmptyFile = TypedError({
 
 module.exports = trimFrom;
 
+// set keys in an order
+function sortedKeys(obj, orderedKeys) {
+    var keys = Object.keys(obj).sort();
+    var fresh = {};
+
+    orderedKeys.forEach(function (key) {
+        if (keys.indexOf(key) === -1) {
+            return;
+        }
+
+        fresh[key] = obj[key];
+    });
+
+    keys.forEach(function (key) {
+        if (orderedKeys.indexOf(key) !== -1) {
+            return;
+        }
+
+        fresh[key] = obj[key];
+    });
+
+    return fresh;
+}
+
 function recursiveSorted(json) {
     if (!json) {
         return json;
@@ -29,7 +53,15 @@ function recursiveSorted(json) {
         json.dependencies = sortedObject(json.dependencies);
     }
 
-    return sortedObject(json);
+    return sortedKeys(json, [
+        'name',
+        'version',
+        'from',
+        'resolved',
+        'npm-shrinkwrap-version',
+        'dependencies'
+    ]);
+
 }
 
 function trimFrom(opts, callback) {
@@ -84,10 +116,6 @@ function trimFrom(opts, callback) {
     function replacer(key, value) {
         if (key !== 'from') {
             return value;
-        }
-
-        if (this.dependencies) {
-            this.dependencies = sortedObject(this.dependencies);
         }
 
         var resolved = this.resolved;
