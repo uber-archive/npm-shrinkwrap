@@ -2,6 +2,8 @@ var ValidationError = require('error/validation');
 var find = require('array-find');
 var template = require('string-template');
 var path = require('path');
+var fs = require('fs');
+var sortedObject = require('sorted-object');
 var readJSON = require('read-json');
 
 var setResolved = require('./set-resolved.js');
@@ -90,7 +92,53 @@ function npmShrinkwrap(opts, callback) {
             return callback(err);
         }
 
-        npm.commands.shrinkwrap({}, true, onshrinkwrap);
+        var fileName = path.join(opts.dirname, 'npm-shrinkwrap.json');
+        readJSON(fileName, onfile);
+
+        function onfile(err, json) {
+            if (err) {
+                npm.commands.shrinkwrap({}, true, onshrinkwrap);
+                return;
+            }
+
+            /* npm.commands.shrinkwrap will blow away any
+                extra keys that you set.
+
+                We have to read extra keys & set them again
+                after shrinkwrap is done
+            */
+            var keys = Object.keys(json).filter(function (k) {
+                return [
+                    'name', 'version', 'dependencies'
+                ].indexOf(k) === -1;
+            });
+
+            npm.commands.shrinkwrap({}, true, onwrapped);
+
+            function onwrapped(err) {
+                if (err) {
+                    return callback(err);
+                }
+
+                readJSON(fileName, onnewfile);
+            }
+
+            function onnewfile(err, newjson) {
+                if (err) {
+                    return callback(err);
+                }
+
+                keys.forEach(function (k) {
+                    if (!newjson[k]) {
+                        newjson[k] = json[k];
+                    }
+                });
+
+                json = sortedObject(json);
+                var buf = JSON.stringify(json, null, 4);
+                fs.writeFile(fileName, buf, 'utf8', onshrinkwrap);
+            }
+        }
     }
 
     function onshrinkwrap(err) {
