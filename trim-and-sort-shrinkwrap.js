@@ -101,6 +101,31 @@ function trimFrom(opts, callback) {
         });
     }
 
+    function fixFromField(fromUri, fromValue, resolved) {
+        var shaIsm = fromUri.hash && fromUri.hash.slice(1);
+
+        // from does not have shaIsm. bail realy
+        if (!shaIsm) {
+            return fromValue;
+        }
+
+        var resolvedUri = url.parse(resolved);
+        var resolveShaism = resolvedUri.hash &&
+            resolvedUri.hash.slice(1);
+
+        // resolved does not have shaIsm. bail early
+        if (!resolveShaism) {
+            return fromValue;
+        }
+
+        // replace the from shaIsm with the resolved shaIsm
+        if (shaIsm !== resolveShaism) {
+            return fromValue.replace(shaIsm, resolveShaism);
+        }
+
+        return fromValue;
+    }
+
     /* trims the `from` field from `npm-shrinkwrap.json` files.
 
         The `from` field is likely to change because different npm
@@ -142,28 +167,7 @@ function trimFrom(opts, callback) {
             // we should always have `from` contain a git sha
             // because that's consistent
 
-            var shaIsm = uri.hash && uri.hash.slice(1);
-
-            // from does not have shaIsm. bail realy
-            if (!shaIsm) {
-                return value;
-            }
-
-            var resolvedUri = url.parse(resolved);
-            var resolveShaism = resolvedUri.hash &&
-                resolvedUri.hash.slice(1);
-
-            // resolved does not have shaIsm. bail early
-            if (!resolveShaism) {
-                return value;
-            }
-
-            // replace the from shaIsm with the resolved shaIsm
-            if (shaIsm !== resolveShaism) {
-                return value.replace(shaIsm, resolveShaism);
-            }
-
-            return value;
+            return fixFromField(uri, value, resolved);
         }
 
         // otherwise the `value` is in the format `name@semverish`
@@ -181,7 +185,7 @@ function trimFrom(opts, callback) {
             return undefined;
         }
 
-        return value;
+        return fixFromField(secondUri, value, resolved);
     }
 }
 
