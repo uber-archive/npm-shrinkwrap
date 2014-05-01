@@ -72,6 +72,10 @@ function gitShow(sha, cwd, callback) {
             console.error(stderr);
         }
 
+        if (err && err.message.indexOf('not in \'HEAD\'') !== -1) {
+            return callback(null, {});
+        }
+
         if (err) {
             return callback(err);
         }
