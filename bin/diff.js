@@ -14,7 +14,8 @@ function purgeDeps(opts, diff, meta) {
 
     var depsKey = 'dependencies' in diff ?
         'dependencies' : 'dependencies__deleted' in diff ?
-            'dependencies__deleted' : null;
+        'dependencies__deleted' : 'dependencies__added' in diff ?
+        'dependencies__added' : null;
     if (!depsKey) {
         return diff;
     }
@@ -25,7 +26,9 @@ function purgeDeps(opts, diff, meta) {
         var deleted = meta.deleted ? meta.deleted :
             (key.indexOf('__deleted') !== -1 ||
             depsKey === 'dependencies__deleted');
-        var added = meta.added || key.indexOf('__added') !== -1;
+        var added = meta.added ? meta.added :
+            (key.indexOf('__added') !== -1 ||
+            depsKey === 'dependencies__added');
         if (deleted || added) {
             if (meta.depth >= opts.depth) {
                 if (!opts.short) {
