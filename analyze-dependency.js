@@ -7,26 +7,26 @@ var readJSON = require('read-json');
 var NoTagError = TypedError({
     type: 'missing.gitlink.tag',
     message: 'Expected the git dependency {name} to have a ' +
-        'tag; instead I found {gitLink}'
+        'tag;\n instead I found {gitLink}'
 });
 
 var NonSemverTag = TypedError({
     type: 'gitlink.tag.notsemver',
     message: 'Expected the git dependency {name} to have a ' +
-        'valid version tag; instead I found {tag} for the ' +
+        'valid version tag;\n instead I found {tag} for the ' +
         'dependency {gitLink}'
 });
 
 var InvalidPackage = TypedError({
     type: 'invalid.packagejson',
     message: 'The package.json for module {name} in your ' +
-        'node_modules tree is malformed. Expected JSON with ' +
+        'node_modules tree is malformed.\n Expected JSON with ' +
         'a version field and instead got {json}'
 });
 
 var InvalidVerson = TypedError({
     type: 'invalid.git.version',
-    message: 'The version of {name} installed is invalid. ' +
+    message: 'The version of {name} installed is invalid.\n ' +
         'Expected {expected} to be installed but instead ' +
         '{actual} is installed.'
 });
