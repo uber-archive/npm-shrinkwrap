@@ -5,11 +5,11 @@ module.exports = {
 };
 
 function notSemver(err) {
-    return 'WARN: ' + err.message.replace(';', ';\n');
+    return 'WARN: ' + err.message;
 }
 
 function invalidVersion(err) {
-    return 'ERROR: ' + err.message.replace('.', '.\n');
+    return 'ERROR: ' + err.message;
 }
 
 function printError(err) {
