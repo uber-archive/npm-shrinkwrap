@@ -95,35 +95,62 @@ function trimFrom(opts, callback) {
 
                 json = recursiveSorted(json);
 
+                json = replaceFields(json, replacer);
+
                 fs.writeFile(shrinkwrapFile,
-                    JSON.stringify(json, replacer, 2), callback);
+                    JSON.stringify(json, null, 4), callback);
             });
         });
     }
 
-    function fixFromField(fromUri, fromValue, resolved) {
-        var shaIsm = fromUri.hash && fromUri.hash.slice(1);
+    function replaceFields(json, replacer, name) {
+        name = name || 'root';
+
+        if (json.from) {
+            json.from = replacer.call(json,
+                'from', json.from, name);
+        }
+
+        if (json.dependencies) {
+            Object.keys(json.dependencies)
+                .forEach(recurse);
+        }
+
+        return json;
+
+        function recurse(name) {
+            json.dependencies[name] = replaceFields(
+                json.dependencies[name],
+                replacer,
+                name);
+        }
+    }
+
+    function fixFromField(opts) {
+        var shaIsm = opts.fromUri.hash &&
+            opts.fromUri.hash.slice(1);
 
         // from does not have shaIsm. bail realy
         if (!shaIsm) {
-            return fromValue;
+            return opts.name + '@' + opts.fromValue;
         }
 
-        var resolvedUri = url.parse(resolved);
+        var resolvedUri = url.parse(opts.resolvedValue);
         var resolveShaism = resolvedUri.hash &&
             resolvedUri.hash.slice(1);
 
         // resolved does not have shaIsm. bail early
         if (!resolveShaism) {
-            return fromValue;
+            return opts.name + '@' + opts.fromValue;
         }
 
         // replace the from shaIsm with the resolved shaIsm
         if (shaIsm !== resolveShaism) {
-            return fromValue.replace(shaIsm, resolveShaism);
+            return opts.name + '@' +
+                opts.fromValue.replace(shaIsm, resolveShaism);
         }
 
-        return fromValue;
+        return opts.name + '@' + opts.fromValue;
     }
 
     /* trims the `from` field from `npm-shrinkwrap.json` files.
@@ -138,7 +165,7 @@ function trimFrom(opts, callback) {
             (i.e. git, git+ssh and https tarbal links) and situations
             where there is no `resolved` field.
     */
-    function replacer(key, value) {
+    function replacer(key, value, name) {
         if (key !== 'from') {
             return value;
         }
@@ -167,7 +194,12 @@ function trimFrom(opts, callback) {
             // we should always have `from` contain a git sha
             // because that's consistent
 
-            return fixFromField(uri, value, resolved);
+            return fixFromField({
+                fromUri: uri,
+                name: name,
+                fromValue: value,
+                resolvedValue: resolved
+            });
         }
 
         // otherwise the `value` is in the format `name@semverish`
@@ -185,7 +217,12 @@ function trimFrom(opts, callback) {
             return undefined;
         }
 
-        return fixFromField(secondUri, value, resolved);
+        return fixFromField({
+            fromUri: secondUri,
+            fromValue: rest,
+            name: name,
+            resolvedValue: resolved
+        });
     }
 }
 

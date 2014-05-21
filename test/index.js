@@ -117,7 +117,7 @@ test('create shrinkwrap for git dep', fixtures(__dirname, {
             assert.deepEqual(json.dependencies, {
                 bar: {
                     version: '2.0.0',
-                    from: 'git://github.com/uber/bar#' + SHA,
+                    from: 'bar@git://github.com/uber/bar#' + SHA,
                     resolved: 'git://github.com/uber/bar#' + SHA
                 }
             });
