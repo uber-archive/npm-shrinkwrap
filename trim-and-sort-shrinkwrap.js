@@ -130,7 +130,7 @@ function trimFrom(opts, callback) {
         var shaIsm = opts.fromUri.hash &&
             opts.fromUri.hash.slice(1);
 
-        // from does not have shaIsm. bail realy
+        // from does not have shaIsm. bail early
         if (!shaIsm) {
             return opts.name + '@' + opts.fromValue;
         }
