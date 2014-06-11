@@ -39,7 +39,7 @@ NPM shrinkwrap serializes your node_modules folder. Depending
 There are a few tricks to ensuring there is no unneeded churn
   in the output of `npm shrinkwrap`.
 
-This first is to ensure you install with `npm cache clear` so
+This first is to ensure you install with `npm cache clean` so
   that an `npm ls` output is going to consistently give you the
   `resolved` and `from` fields.
 
