@@ -58,7 +58,7 @@ function setResolved(opts, callback) {
 
         json['npm-shrinkwrap-version'] = version;
 
-        json = fixResolved(json);
+        json = fixResolved(json, null);
 
         // if top level shrinkwrap has a `from` or `resolved`
         // field then delete them
@@ -76,6 +76,11 @@ function setResolved(opts, callback) {
     function fixResolved(json, name) {
         if (json.from && !json.resolved) {
             computeResolved(json, name);
+        }
+
+        // handle the case of no resolved & no from
+        if (json.version && name && !json.resolved) {
+            json.resolved = createUri(name, json.version);
         }
 
         if (rewriteResolved && json.resolved) {
