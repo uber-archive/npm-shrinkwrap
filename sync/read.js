@@ -8,13 +8,13 @@ module.exports = {
 };
 
 function readPackage(dirname, cb) {
-    var uri = path.join(dirname, 'package.json');
-    readJSON(uri, cb);
+    var filePath = path.join(dirname, 'package.json');
+    readJSON(filePath, cb);
 }
 
 function readShrinkwrap(dirname, cb) {
-    var uri = path.join(dirname, 'npm-shrinkwrap.json');
-    readJSON(uri, cb);
+    var filePath = path.join(dirname, 'npm-shrinkwrap.json');
+    readJSON(filePath, cb);
 }
 
 function readDevDependencies(dirname, cb) {
