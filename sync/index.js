@@ -45,13 +45,13 @@ function syncShrinkwrap(opts, cb) {
                 return cb(err);
             }
 
-            var uri = path.join(dirname, 'node_modules');
+            var nodeModules = path.join(dirname, 'node_modules');
             var shrinkwrap = tuple.shrinkwrap;
             shrinkwrap.devDependencies = tuple.devDependencies;
 
             opts.dev = true;
 
-            forceInstall(uri, shrinkwrap, opts, cb);
+            forceInstall(nodeModules, shrinkwrap, opts, cb);
         });
     });
 }
