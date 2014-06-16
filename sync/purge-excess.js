@@ -26,9 +26,9 @@ function purgeExcess(dir, shrinkwrap, opts, cb) {
         }
 
         var tasks = excessFiles.map(function (file) {
-            var uri = path.join(dir, file);
-            console.log('removing', uri);
-            return rimraf.bind(null, uri);
+            var filePath = path.join(dir, file);
+            console.log('removing', filePath);
+            return rimraf.bind(null, filePath);
         });
 
         parallel(tasks, cb);
