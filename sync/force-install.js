@@ -18,7 +18,7 @@ function forceInstall(nodeModules, shrinkwrap, opts, cb) {
         opts = {};
     }
 
-    // if no dependencies hash then terminate recursion
+    // if no dependencies object then terminate recursion
     if (shrinkwrap.name && !shrinkwrap.dependencies) {
         return cb(null);
     }
@@ -30,9 +30,9 @@ function forceInstall(nodeModules, shrinkwrap, opts, cb) {
         if (!dep.name) {
             dep.name = key;
         }
-        var uri = path.join(nodeModules, key);
+        var filePath = path.join(nodeModules, key);
 
-        return isCorrect.bind(null, uri, dep, opts);
+        return isCorrect.bind(null, filePath, dep, opts);
     });
 
     tasks.push(purgeExcess.bind(
@@ -54,10 +54,6 @@ function forceInstall(nodeModules, shrinkwrap, opts, cb) {
         var corrects = results.filter(function (dep) {
             return dep.correct;
         });
-
-        // if (incorrects.length > 0) {
-            // console.log('incorrects', incorrects);
-        // }
 
         /*  for each incorrect
 

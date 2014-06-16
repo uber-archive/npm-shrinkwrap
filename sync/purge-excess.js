@@ -8,6 +8,7 @@ module.exports = purgeExcess;
 /*  given the shrinkwrap & package.json, find all extra folders
     in top level node_modules directory and remove them
 
+    Basically like `npm prune` except recursive
 */
 function purgeExcess(dir, shrinkwrap, opts, cb) {
     if (typeof opts === 'function') {
