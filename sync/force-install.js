@@ -95,7 +95,7 @@ function forceInstall(nodeModules, shrinkwrap, opts, cb) {
 }
 
 
-function isCorrect(uri, dep, opts, cb) {
+function isCorrect(filePath, dep, opts, cb) {
     var createUri = opts.createUri || defaultCreateUri;
 
     dep.resolved = dep.resolved ||
@@ -106,21 +106,21 @@ function isCorrect(uri, dep, opts, cb) {
     if (resolvedUri.protocol === 'http:' ||
         resolvedUri.protocol === 'https:'
     ) {
-        return isCorrectVersion(uri, dep, cb);
+        return isCorrectVersion(filePath, dep, cb);
     } else if (resolvedUri.protocol === 'git:' ||
         resolvedUri.protocol === 'git+ssh:'
     ) {
-        isCorrectSHA(uri, dep, cb);
+        isCorrectSHA(filePath, dep, cb);
     } else {
         cb(new Error('insupported protocol ' +
             resolvedUri.protocol));
     }
 }
 
-function isCorrectVersion(uri, dep, cb) {
+function isCorrectVersion(filePath, dep, cb) {
     var expectedVersion = dep.version;
 
-    read.package(uri, function (err, json) {
+    read.package(filePath, function (err, json) {
         if (err) {
             if (err && err.code === 'ENOENT') {
                 dep.correct = false;
@@ -137,10 +137,10 @@ function isCorrectVersion(uri, dep, cb) {
     });
 }
 
-function isCorrectSHA(uri, dep, cb) {
+function isCorrectSHA(filePath, dep, cb) {
     var expectedSha = getSha(dep.resolved);
 
-    read.package(uri, function (err, json) {
+    read.package(filePath, function (err, json) {
         if (err) {
             if (err && err.code === 'ENOENT') {
                 dep.correct = false;
