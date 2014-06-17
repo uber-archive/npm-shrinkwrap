@@ -20,7 +20,7 @@ function forceInstall(nodeModules, shrinkwrap, opts, cb) {
 
     // if no dependencies object then terminate recursion
     if (shrinkwrap.name && !shrinkwrap.dependencies) {
-        return cb(null);
+        return purgeExcess(nodeModules, shrinkwrap, opts, cb);
     }
 
     var deps = shrinkwrap.dependencies;

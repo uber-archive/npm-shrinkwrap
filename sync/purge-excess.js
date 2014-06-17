@@ -63,7 +63,7 @@ function findExcess(dir, shrinkwrap, opts, cb) {
             });
         }
 
-        var deps = shrinkwrap.dependencies;
+        var deps = shrinkwrap.dependencies || {};
         var keys = Object.keys(deps).map(function (s) {
             return s.toLowerCase();
         });
