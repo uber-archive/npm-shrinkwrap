@@ -10,6 +10,15 @@ This runs shrinkwrap, which verifies your package.json &
   node_modules tree are in sync. If they are it runs shrinkwrap
   then fixes the resolved fields and trims from fields
 
+When you run `npm-shrinkwrap` it will either:
+
+ - fail because your package.json & node_modules disagree, i.e.
+    your installed something without `--save` or hand edited your
+    package.json
+ - succeed, and add all top level dependencies to your
+    npm-shrinkwrap.json file and then runs `npm-shrinkwrap sync`
+    which writes the npm-shrinkwrap.json back into node_modules
+
 ## Motivation
 
 ### Verify local correct ness
