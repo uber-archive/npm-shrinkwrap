@@ -10,6 +10,56 @@ var setResolved = require('./set-resolved.js');
 var trimFrom = require('./trim-and-sort-shrinkwrap.js');
 var verifyGit = require('./verify-git.js');
 var walkDeps = require('./walk-shrinkwrap.js');
+var trimNested = require('./trim-nested.js');
+var sync = require('./sync/');
+
+/*  npm-shrinkwrap algorithm
+
+     - run `npm ls` to verify that node_modules & package.json
+        agree.
+
+     - run `verifyGit()` which has a similar algorithm to 
+        `npm ls` and will verify that node_modules & package.json
+        agree for all git links.
+
+     - read the old `npm-shrinkwrap.json` into memory
+
+     - run `npm shrinkwrap`
+
+     - copy over excess non-standard keys from old shrinkwrap
+        into new shrinkwrap and write new shrinkwrap with extra
+        keys to disk.
+
+     - run `trimNested()` which will trim any changes in the
+        npm-shrinkwrap.json to dependencies at depth >=1. i.e.
+        any changes to nested dependencies without changes to
+        the direct parent dependency just get deleted
+
+     - run `setResolved()` which will ensure that the new
+        npm-shrinkwrap.json has a `"resolved"` field for every
+        package and writes it to disk.
+
+     - run `trimFrom()` which normalizes or removes the `"from"`
+        field from the new npm-shrinkwrap.json. It also sorts
+        the new npm-shrinkwrap.json deterministically then
+        writes that to disk
+
+     - run `sync()` to the new `npm-shrinkwrap.json` back into
+        the `node_modules` folder
+
+
+    npm-shrinkwrap NOTES:
+
+     - `verifyGit()` only has a depth of 0, where as `npm ls`
+        has depth infinity.
+
+     - `verifyGit()` is only sound for git tags. This means that
+        for non git tags it gives warnings / errors instead.
+
+     - `trimFrom()` also sorts and rewrites the package.json
+        for consistency
+
+*/
 
 function npmShrinkwrap(opts, callback) {
     if (typeof opts === 'string') {
@@ -95,8 +145,10 @@ function npmShrinkwrap(opts, callback) {
         var fileName = path.join(opts.dirname, 'npm-shrinkwrap.json');
         readJSON(fileName, onfile);
 
-        function onfile(err, json) {
+        function onfile(err, oldShrinkwrap) {
             if (err) {
+                // if no npm-shrinkwrap.json exists then just
+                // create one
                 npm.commands.shrinkwrap({}, true, onshrinkwrap);
                 return;
             }
@@ -107,11 +159,12 @@ function npmShrinkwrap(opts, callback) {
                 We have to read extra keys & set them again
                 after shrinkwrap is done
             */
-            var keys = Object.keys(json).filter(function (k) {
-                return [
-                    'name', 'version', 'dependencies'
-                ].indexOf(k) === -1;
-            });
+            var keys = Object.keys(oldShrinkwrap)
+                .filter(function (k) {
+                    return [
+                        'name', 'version', 'dependencies'
+                    ].indexOf(k) === -1;
+                });
 
             npm.commands.shrinkwrap({}, true, onwrapped);
 
@@ -123,19 +176,22 @@ function npmShrinkwrap(opts, callback) {
                 readJSON(fileName, onnewfile);
             }
 
-            function onnewfile(err, newjson) {
+            function onnewfile(err, newShrinkwrap) {
                 if (err) {
                     return callback(err);
                 }
 
                 keys.forEach(function (k) {
-                    if (!newjson[k]) {
-                        newjson[k] = json[k];
+                    if (!newShrinkwrap[k]) {
+                        newShrinkwrap[k] = oldShrinkwrap[k];
                     }
                 });
 
-                newjson = sortedObject(newjson);
-                var buf = JSON.stringify(newjson, null, 4);
+                newShrinkwrap = sortedObject(newShrinkwrap);
+                newShrinkwrap = trimNested(oldShrinkwrap,
+                    newShrinkwrap, opts);
+
+                var buf = JSON.stringify(newShrinkwrap, null, 4);
                 fs.writeFile(fileName, buf, 'utf8', onshrinkwrap);
             }
         }
@@ -171,6 +227,20 @@ function npmShrinkwrap(opts, callback) {
             return callback(err);
         }
 
+        sync(opts, function (err, callback) {
+            if (err) {
+                return callback(err);
+            }
+
+            onsync(null, shrinkwrap);
+        });
+    }
+
+    function onsync(err, shrinkwrap) {
+        if (err) {
+            return callback(err);
+        }
+
         var warnings = _warnings ? _warnings : [];
 
         if (opts.validators && Array.isArray(opts.validators) &&
@@ -190,7 +260,7 @@ function npmShrinkwrap(opts, callback) {
         callback(null, warnings);
     }
 }
-
+ 
 module.exports = npmShrinkwrap;
 
 /*  you cannot call `npm.load()` twice with different prefixes.

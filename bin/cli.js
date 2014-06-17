@@ -28,6 +28,10 @@ function main(opts, callback) {
     opts.dirname = opts.dirname ?
         path.resolve(opts.dirname) : process.cwd();
 
+    opts.keepNested = 'keep-nested' in opts ?
+        !!opts['keep-nested'] : 'keepNested' in opts ?
+        !!opts.keepNested : false;
+
     opts.warnOnNotSemver = opts.warnOnNotSemver ?
         opts.warnOnNotSemver : true;
 
