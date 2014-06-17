@@ -240,8 +240,8 @@ function fixPackage(dirname, callback) {
             json.devDependencies = sortedObject(json.devDependencies);
         }
 
-        fs.writeFile(packageJsonFile,
-            JSON.stringify(json, null, 2), callback);
+        var data = JSON.stringify(json, null, 2) + '\n';
+        fs.writeFile(packageJsonFile, data, callback);
     });
 }
 
