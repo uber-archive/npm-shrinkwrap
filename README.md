@@ -94,6 +94,54 @@ npmShrinkwrap({
 })
 ```
 
+## Algorithm
+
+npm-shrinkwrap algorithm
+
+ - run `npm ls` to verify that node_modules & package.json
+    agree.
+
+ - run `verifyGit()` which has a similar algorithm to 
+    `npm ls` and will verify that node_modules & package.json
+    agree for all git links.
+
+ - read the old `npm-shrinkwrap.json` into memory
+
+ - run `npm shrinkwrap`
+
+ - copy over excess non-standard keys from old shrinkwrap
+    into new shrinkwrap and write new shrinkwrap with extra
+    keys to disk.
+
+ - run `setResolved()` which will ensure that the new
+    npm-shrinkwrap.json has a `"resolved"` field for every
+    package and writes it to disk.
+
+ - run `trimFrom()` which normalizes or removes the `"from"`
+    field from the new npm-shrinkwrap.json. It also sorts
+    the new npm-shrinkwrap.json deterministically then
+    writes that to disk
+
+ - run `trimNested()` which will trim any changes in the
+    npm-shrinkwrap.json to dependencies at depth >=1. i.e.
+    any changes to nested dependencies without changes to
+    the direct parent dependency just get deleted
+
+ - run `sync()` to the new `npm-shrinkwrap.json` back into
+    the `node_modules` folder
+
+
+npm-shrinkwrap NOTES:
+
+ - `verifyGit()` only has a depth of 0, where as `npm ls`
+    has depth infinity.
+
+ - `verifyGit()` is only sound for git tags. This means that
+    for non git tags it gives warnings / errors instead.
+
+ - `trimFrom()` also sorts and rewrites the package.json
+    for consistency
+
 ## Installation
 
 `npm install npm-shrinkwrap`
