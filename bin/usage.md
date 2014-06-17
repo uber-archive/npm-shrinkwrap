@@ -15,6 +15,21 @@ Options:
 
 Prints this message
 
+## `{cmd} sync`
+
+Syncs your `npm-shrinkwrap.json` file into the `node_modules`
+  directory.
+
+This will ensure that your local `node_modules` matches the
+  `npm-shrinkwrap.json` file verbatim. Any excess modules in
+  your node_modules folder will be removed if they are not in
+  the `npm-shrinkwrap.json` file.
+
+Options:
+    --dirname   sets the directory of the npm-shrinkwrap.json
+
+ - `--dirname` defaults to `process.cwd()`
+
 ## `{cmd} install`
 
 Will write a `shrinkwrap` script to your `package.json` file.

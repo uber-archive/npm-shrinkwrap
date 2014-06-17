@@ -8,6 +8,7 @@ var printHelp = require('./help.js');
 var shrinkwrap = require('../index.js');
 var formatters = require('./formatters.js');
 var diffShrinkwrap = require('./diff.js');
+var syncShrinkwrap = require('../sync/');
 
 main.printWarnings = printWarnings;
 
@@ -47,6 +48,19 @@ function main(opts, callback) {
             }
 
             console.log(diff);
+        });
+    } else if (command === 'sync') {
+        return syncShrinkwrap(opts, function (err) {
+            if (err) {
+                console.log('error', err);
+                console.error('stack', new Error().stack);
+                // console.log('stack.length', err.stack.length);
+                // return;
+                throw err;
+            }
+
+            console.log('synced npm-shrinkwrap.json ' +
+                'into node_modules');
         });
     }
 
