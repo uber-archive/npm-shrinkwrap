@@ -30,11 +30,6 @@ var sync = require('./sync/');
         into new shrinkwrap and write new shrinkwrap with extra
         keys to disk.
 
-     - run `trimNested()` which will trim any changes in the
-        npm-shrinkwrap.json to dependencies at depth >=1. i.e.
-        any changes to nested dependencies without changes to
-        the direct parent dependency just get deleted
-
      - run `setResolved()` which will ensure that the new
         npm-shrinkwrap.json has a `"resolved"` field for every
         package and writes it to disk.
@@ -43,6 +38,11 @@ var sync = require('./sync/');
         field from the new npm-shrinkwrap.json. It also sorts
         the new npm-shrinkwrap.json deterministically then
         writes that to disk
+
+     - run `trimNested()` which will trim any changes in the
+        npm-shrinkwrap.json to dependencies at depth >=1. i.e.
+        any changes to nested dependencies without changes to
+        the direct parent dependency just get deleted
 
      - run `sync()` to the new `npm-shrinkwrap.json` back into
         the `node_modules` folder
@@ -67,6 +67,7 @@ function npmShrinkwrap(opts, callback) {
     }
 
     var _warnings = null;
+    var _oldShrinkwrap = null;
 
     getNPM().load({
         prefix: opts.dirname,
@@ -153,6 +154,8 @@ function npmShrinkwrap(opts, callback) {
                 return;
             }
 
+            _oldShrinkwrap = oldShrinkwrap;
+
             /* npm.commands.shrinkwrap will blow away any
                 extra keys that you set.
 
@@ -188,8 +191,6 @@ function npmShrinkwrap(opts, callback) {
                 });
 
                 newShrinkwrap = sortedObject(newShrinkwrap);
-                newShrinkwrap = trimNested(oldShrinkwrap,
-                    newShrinkwrap, opts);
 
                 var buf = JSON.stringify(newShrinkwrap, null, 4);
                 fs.writeFile(fileName, buf, 'utf8', onshrinkwrap);
@@ -218,8 +219,27 @@ function npmShrinkwrap(opts, callback) {
             return callback(err);
         }
 
-        var fileName = path.join(opts.dirname, 'npm-shrinkwrap.json');
-        readJSON(fileName, onfinalwrap);
+        var fileName = path.join(opts.dirname,
+            'npm-shrinkwrap.json');
+        readJSON(fileName, function (err, newShrinkwrap) {
+            if (err) {
+                return callback(err);
+            }
+
+            if (_oldShrinkwrap) {
+                newShrinkwrap = trimNested(_oldShrinkwrap,
+                    newShrinkwrap, opts);
+            }
+
+            var buf = JSON.stringify(newShrinkwrap, null, 4);
+            fs.writeFile(fileName, buf, 'utf8', function (err) {
+                if (err) {
+                    return callback(err);
+                }
+
+                readJSON(fileName, onfinalwrap);
+            });
+        });
     }
 
     function onfinalwrap(err, shrinkwrap) {
