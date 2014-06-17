@@ -11,6 +11,7 @@ var trimFrom = require('./trim-and-sort-shrinkwrap.js');
 var verifyGit = require('./verify-git.js');
 var walkDeps = require('./walk-shrinkwrap.js');
 var trimNested = require('./trim-nested.js');
+var sync = require('./sync/');
 
 /*  npm-shrinkwrap algorithm
 
@@ -42,6 +43,9 @@ var trimNested = require('./trim-nested.js');
         field from the new npm-shrinkwrap.json. It also sorts
         the new npm-shrinkwrap.json deterministically then
         writes that to disk
+
+     - run `sync()` to the new `npm-shrinkwrap.json` back into
+        the `node_modules` folder
 
 
     npm-shrinkwrap NOTES:
@@ -219,6 +223,20 @@ function npmShrinkwrap(opts, callback) {
     }
 
     function onfinalwrap(err, shrinkwrap) {
+        if (err) {
+            return callback(err);
+        }
+
+        sync(opts, function (err, callback) {
+            if (err) {
+                return callback(err);
+            }
+
+            onsync(null, shrinkwrap);
+        });
+    }
+
+    function onsync(err, shrinkwrap) {
         if (err) {
             return callback(err);
         }

@@ -51,7 +51,7 @@ function findExcess(dir, shrinkwrap, opts, cb) {
             return file !== '.bin';
         });
 
-        if (opts.dev) {
+        if (opts.dev && shrinkwrap.devDependencies) {
             var devDeps = shrinkwrap.devDependencies;
             var devKeys = Object.keys(devDeps).map(function (s) {
                 return s.toLowerCase();
