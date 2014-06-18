@@ -248,7 +248,7 @@ function npmShrinkwrap(opts, callback) {
             return callback(err);
         }
 
-        sync(opts, function (err, callback) {
+        sync(opts, function (err) {
             if (err) {
                 return callback(err);
             }
