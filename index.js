@@ -71,6 +71,7 @@ function npmShrinkwrap(opts, callback) {
 
     getNPM().load({
         prefix: opts.dirname,
+        dev: opts.dev,
         loglevel: 'error'
     }, verifyTree);
 
