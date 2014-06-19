@@ -37,7 +37,7 @@
   },
   "scripts": {
     "test": "npm run jshint -s && NODE_ENV=test node test/index.js | tap-spec",
-    "unit-test": "NODE_ENV=test node test/index.js | tap-spec",
+    "unit-test": "NODE_ENV=test node test/npm-shrinkwrap.js | tap-spec",
     "jshint-pre-commit": "jshint --verbose $(git diff --cached --name-only | grep '\\.js$')",
     "jshint": "jshint --verbose .",
     "cover": "istanbul cover --report none --print detail test/index.js",
