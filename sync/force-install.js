@@ -108,11 +108,12 @@ function isCorrect(filePath, dep, opts, cb) {
     ) {
         return isCorrectVersion(filePath, dep, cb);
     } else if (resolvedUri.protocol === 'git:' ||
-        resolvedUri.protocol === 'git+ssh:'
+        resolvedUri.protocol === 'git+ssh:' ||
+        resolvedUri.protocol === 'git+https:'
     ) {
         isCorrectSHA(filePath, dep, cb);
     } else {
-        cb(new Error('insupported protocol ' +
+        cb(new Error('unsupported protocol ' +
             resolvedUri.protocol));
     }
 }
