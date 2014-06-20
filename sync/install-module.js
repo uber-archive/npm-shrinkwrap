@@ -1,3 +1,5 @@
+var exec = require('child_process').exec;
+
 var path = require('path');
 
 module.exports = installModule;
@@ -9,15 +11,16 @@ module.exports = installModule;
 
 */
 function installModule(nodeModules, dep, opts, cb) {
-    // must lazy require npm or it breaks with the npm.load() order
-    var install = require('npm/lib/install.js');
-
     var where = path.join(nodeModules, '..');
 
     console.log('installing ', where, dep.resolved);
+    var cmd = 'npm install ' + dep.resolved;
 
-    // console.log('dep', where, dep.resolved);
-    install(where, [
-        dep.resolved
-    ], cb);
+    if (opts.registry) {
+        cmd += ' --registry=' + opts.registry;
+    }
+
+    exec(cmd, {
+        cwd: where
+    }, cb);
 }
