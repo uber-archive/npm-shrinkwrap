@@ -14,8 +14,13 @@ function installModule(nodeModules, dep, opts, cb) {
     var where = path.join(nodeModules, '..');
 
     console.log('installing ', where, dep.resolved);
+    var cmd = 'npm install ' + dep.resolved;
 
-    exec('npm install ' + dep.resolved, {
+    if (opts.registry) {
+        cmd += ' --registry=' + opts.registry;
+    }
+
+    exec(cmd, {
         cwd: where
     }, cb);
 }
