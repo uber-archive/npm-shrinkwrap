@@ -126,6 +126,9 @@ function isCorrectVersion(filePath, dep, cb) {
             if (err && err.code === 'ENOENT') {
                 dep.correct = false;
                 return cb(null, dep);
+            } else if (err && !err.code) {
+                dep.correct = false;
+                return cb(null, dep);
             }
 
             return cb(err);
