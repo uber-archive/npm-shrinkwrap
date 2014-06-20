@@ -37,6 +37,10 @@ function trimNested(previous, current, opts) {
 }
 
 function removeTopLevelPatches(patches) {
+    if (!patches.dependencies) {
+        return patches;
+    }
+
     patches.dependencies = Object.keys(patches.dependencies)
         .reduce(function (acc, key) {
             var patch = patches.dependencies[key];
