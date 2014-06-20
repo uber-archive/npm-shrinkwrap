@@ -25,13 +25,13 @@ function verifyGit(opts, callback) {
 
         parallel([
             analyze.bind(null, deps, opts),
-            analyze.bind(null, devDeps, opts)
-        ], function (err, values) {
+            opts.dev ? analyze.bind(null, devDeps, opts) : null
+        ].filter(Boolean), function (err, values) {
             if (err) {
                 return callback(err);
             }
 
-            var errors = [].concat(values[0], values[1]);
+            var errors = values[0].concat(values[1] || []);
 
             callback(null, errors);
         });

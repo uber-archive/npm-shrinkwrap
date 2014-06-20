@@ -31,6 +31,13 @@ var InvalidVerson = TypedError({
         '{actual} is installed.'
 });
 
+var MissingPackage = TypedError({
+    type: 'missing.package',
+    message: 'The version of {name} installed is missing.\n' +
+        'Expected {expected} to be installed but instead ' +
+            'found nothing installed.\n'
+});
+
 module.exports = analyzeDependency;
 /*
 
@@ -82,6 +89,15 @@ function analyzeDependency(name, gitLink, opts, cb) {
         name, 'package.json');
     readJSON(packageUri, function (err, pkg) {
         if (err) {
+            if (err.code === 'ENOENT') {
+                return cb(null, MissingPackage({
+                    name: name,
+                    expected: version,
+                    dirname: opts.dirname,
+                    tag: parsed.tag
+                }));
+            }
+
             return cb(err);
         }
 
