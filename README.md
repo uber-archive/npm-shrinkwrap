@@ -4,7 +4,7 @@ A consistent shrinkwrap tool
 
 ## Usage
 
-`$ npm-shinkwrap`
+`$ npm-shrinkwrap`
 
 This runs shrinkwrap, which verifies your package.json & 
   node_modules tree are in sync. If they are it runs shrinkwrap
