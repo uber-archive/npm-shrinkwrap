@@ -47,6 +47,10 @@ function main(opts, callback) {
         });
     } else if (command === 'diff') {
         return diffShrinkwrap(opts, function (err, diff) {
+            if (callback) {
+                return callback(err, diff);
+            }
+
             if (err) {
                 throw err;
             }
@@ -55,6 +59,10 @@ function main(opts, callback) {
         });
     } else if (command === 'sync') {
         return syncShrinkwrap(opts, function (err) {
+            if (callback) {
+                return callback(err);
+            }
+
             if (err) {
                 console.log('error', err);
                 console.error('stack', new Error().stack);
