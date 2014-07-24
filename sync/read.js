@@ -4,8 +4,9 @@ var TypedError = require('error/typed');
 
 var FileNotFound = TypedError({
     type: 'file.not.found',
-    message: 'Expected the file {filePath} exist\n' +
-        'run `npm run shrinkwrap` to generate one.'
+    message: 'Expected the npm-shrinkwrap.json file to exist exist\n' +
+        'filePath {filePath}.\n' +
+        'SUGGESTED FIX: run `npm run shrinkwrap` or `npm-shrinkwrap` to generate one.\n'
 });
 
 module.exports = {
