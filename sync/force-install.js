@@ -109,6 +109,7 @@ function isCorrect(filePath, dep, opts, cb) {
         return isCorrectVersion(filePath, dep, cb);
     } else if (resolvedUri.protocol === 'git:' ||
         resolvedUri.protocol === 'git+ssh:' ||
+        resolvedUri.protocol === 'git+http:' ||
         resolvedUri.protocol === 'git+https:'
     ) {
         isCorrectSHA(filePath, dep, cb);
