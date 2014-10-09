@@ -10,6 +10,7 @@ var version = require('./package.json').version;
 
 var NPM_URI = 'https://registry.npmjs.org/{name}/-/{name}-{version}.tgz';
 var INVALID_VERSION = TypedError({
+    type: 'npm-shrinkwrap.invalid_version',
     message: 'Using an older version of npm-shrinkwrap.\n' +
         'Expected version {existing} but found {current}.\n' +
         'To fix: please run `npm install npm-shrinkwrap@{existing}`\n'
