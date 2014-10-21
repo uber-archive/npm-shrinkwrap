@@ -69,15 +69,6 @@ function analyzeDependency(name, gitLink, opts, cb) {
 
     var version = parseVersion(parsed.tag);
 
-    if (!version) {
-        return cb(null, NonSemverTag({
-            name: name,
-            gitLink: gitLink,
-            tag: parsed.tag,
-            dirname: opts.dirname
-        }));
-    }
-
     var packageUri = path.join(opts.dirname, 'node_modules',
         name, 'package.json');
     readJSON(packageUri, function (err, pkg) {
@@ -95,18 +86,18 @@ function analyzeDependency(name, gitLink, opts, cb) {
             }));
         }
 
-        if (pkg.version !== version) {
+        if ((pkg.version === version) || (pkg._from.split('@').pop() === gitLink)) {
+            return cb(null);
+        } else {
             return cb(null, InvalidVerson({
                 name: name,
-                expected: version,
-                actual: pkg.version,
+                expected: version || gitLink,
+                actual: version ? pkg.version : pkg._resolved,
                 gitLink: gitLink,
                 tag: parsed.tag,
                 dirname: opts.dirname
             }));
         }
-
-        return cb(null);
     });
 }
 
