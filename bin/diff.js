@@ -88,7 +88,7 @@ function gitShow(sha, cwd, callback) {
 
     exec('git show ' + sha + ':npm-shrinkwrap.json', {
         cwd: cwd || process.cwd(),
-        maxBuffer: 500 * 1024
+        maxBuffer: 10000 * 1024
     }, ongit);
 }
 
