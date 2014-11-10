@@ -280,7 +280,7 @@ function npmShrinkwrap(opts, callback) {
         }
 
         if (errors.length) {
-            return callback(ValidationError(errors));
+            return callback(ValidationError(errors), warnings);
         }
 
         callback(null, warnings);
