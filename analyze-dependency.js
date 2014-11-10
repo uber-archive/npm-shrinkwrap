@@ -1,42 +1,9 @@
 var url = require('url');
-var TypedError = require('error/typed');
 var validSemver = require('semver').valid;
 var path = require('path');
 var readJSON = require('read-json');
 
-var NoTagError = TypedError({
-    type: 'missing.gitlink.tag',
-    message: 'Expected the git dependency {name} to have a ' +
-        'tag;\n instead I found {gitLink}'
-});
-
-var NonSemverTag = TypedError({
-    type: 'gitlink.tag.notsemver',
-    message: 'Expected the git dependency {name} to have a ' +
-        'valid version tag;\n instead I found {tag} for the ' +
-        'dependency {gitLink}'
-});
-
-var InvalidPackage = TypedError({
-    type: 'invalid.packagejson',
-    message: 'The package.json for module {name} in your ' +
-        'node_modules tree is malformed.\n Expected JSON with ' +
-        'a version field and instead got {json}'
-});
-
-var InvalidVerson = TypedError({
-    type: 'invalid.git.version',
-    message: 'The version of {name} installed is invalid.\n ' +
-        'Expected {expected} to be installed but instead ' +
-        '{actual} is installed.'
-});
-
-var MissingPackage = TypedError({
-    type: 'missing.package',
-    message: 'The version of {name} installed is missing.\n' +
-        'Expected {expected} to be installed but instead ' +
-            'found nothing installed.\n'
-});
+var errors = require('./errors.js');
 
 module.exports = analyzeDependency;
 /*
@@ -67,7 +34,7 @@ function analyzeDependency(name, gitLink, opts, cb) {
     }
 
     if (!parsed.tag) {
-        return cb(null, NoTagError({
+        return cb(null, errors.NoTagError({
             name: name,
             gitLink: gitLink,
             dirname: opts.dirname
@@ -77,7 +44,7 @@ function analyzeDependency(name, gitLink, opts, cb) {
     var version = parseVersion(parsed.tag);
 
     if (!version) {
-        return cb(null, NonSemverTag({
+        return cb(null, errors.NonSemverTag({
             name: name,
             gitLink: gitLink,
             tag: parsed.tag,
@@ -90,7 +57,7 @@ function analyzeDependency(name, gitLink, opts, cb) {
     readJSON(packageUri, function (err, pkg) {
         if (err) {
             if (err.code === 'ENOENT') {
-                return cb(null, MissingPackage({
+                return cb(null, errors.MissingPackage({
                     name: name,
                     expected: version,
                     dirname: opts.dirname,
@@ -102,7 +69,7 @@ function analyzeDependency(name, gitLink, opts, cb) {
         }
 
         if (!pkg || !pkg.version) {
-            return cb(null, InvalidPackage({
+            return cb(null, errors.InvalidPackage({
                 name: name,
                 gitLink: gitLink,
                 json: JSON.stringify(pkg),
@@ -112,7 +79,7 @@ function analyzeDependency(name, gitLink, opts, cb) {
         }
 
         if (pkg.version !== version) {
-            return cb(null, InvalidVerson({
+            return cb(null, errors.InvalidVersion({
                 name: name,
                 expected: version,
                 actual: pkg.version,

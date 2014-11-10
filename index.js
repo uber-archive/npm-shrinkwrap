@@ -1,6 +1,5 @@
 var ValidationError = require('error/validation');
 var find = require('array-find');
-var template = require('string-template');
 var path = require('path');
 var fs = require('fs');
 var sortedObject = require('sorted-object');
@@ -12,6 +11,7 @@ var verifyGit = require('./verify-git.js');
 var walkDeps = require('./walk-shrinkwrap.js');
 var trimNested = require('./trim-nested.js');
 var sync = require('./sync/');
+var ERRORS = require('./errors.js');
 
 /*  npm-shrinkwrap algorithm
 
@@ -114,10 +114,12 @@ function npmShrinkwrap(opts, callback) {
             });
 
             if (invalid) {
-                var msg = 'Problems were encountered\n' +
-                    'Please correct and try again\n' +
-                    'invalid: {name}@{actual} {dirname}/node_modules/{name}';
-                error.message = template(msg, invalid);
+                error = ERRORS.InvalidVersionsNPMError({
+                    actual: invalid.actual,
+                    name: invalid.name,
+                    dirname: invalid.dirname,
+                    errors: error.errors
+                });
             }
 
             var types = errors.reduce(function (acc, e) {
@@ -298,9 +300,10 @@ function getNPM() {
 }
 
 function NPMError(pkginfo) {
-    var err = new Error('Problems were encountered\n' +
-        'Please correct and try again.\n' +
-        pkginfo.problems.join('\n'));
-    err.pkginfo = pkginfo;
-    return err;
+    var problemsText = pkginfo.problems.join('\n');
+
+    return ERRORS.NPMError({
+        pkginfo: pkginfo,
+        problemsText: problemsText
+    });
 }
