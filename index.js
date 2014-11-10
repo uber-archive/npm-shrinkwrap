@@ -265,19 +265,24 @@ function npmShrinkwrap(opts, callback) {
         }
 
         var warnings = _warnings ? _warnings : [];
+        var errors = [];
 
         if (opts.validators && Array.isArray(opts.validators) &&
             opts.validators.length !== 0
         ) {
             walkDeps(shrinkwrap, function (node, key, parent) {
-                var warns = opts.validators.map(function (f) {
+                var errs = opts.validators.map(function (f) {
                     return f(node, key, parent);
                 }).filter(Boolean);
 
-                if (warns.length) {
-                    warnings = warnings.concat(warns);
+                if (errs.length) {
+                    errors = errors.concat(errs);
                 }
             });
+        }
+
+        if (errors.length) {
+            return callback(ValidationError(errors), warnings);
         }
 
         callback(null, warnings);
