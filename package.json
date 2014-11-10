@@ -33,7 +33,7 @@
     "jshint": "2.5.6",
     "pre-commit": "0.0.9",
     "tap-spec": "~1.0.0",
-    "tape": "^3.0.0"
+    "tape": "^3.0.2"
   },
   "scripts": {
     "test": "npm run jshint -s && NODE_ENV=test node test/index.js | tap-spec",

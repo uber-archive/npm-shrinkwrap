@@ -4,13 +4,9 @@ var url = require('url');
 var safeJsonParse = require('safe-json-parse');
 var parallel = require('run-parallel');
 var sortedObject = require('sorted-object');
-var TypedError = require('error/typed');
 var readJSON = require('read-json');
 
-var EmptyFile = TypedError({
-    message: 'npm-shrinkwrap must not be empty',
-    type: 'npm-shrinkwrap.missing'
-});
+var errors = require('./errors.js');
 
 module.exports = trimFrom;
 
@@ -85,7 +81,7 @@ function trimFrom(opts, callback) {
             }
 
             if (file === '') {
-                return callback(EmptyFile());
+                return callback(errors.EmptyFile());
             }
 
             safeJsonParse(file, function (err, json) {
