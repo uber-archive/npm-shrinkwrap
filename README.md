@@ -13,7 +13,7 @@ This runs shrinkwrap, which verifies your package.json &
 When you run `npm-shrinkwrap` it will either:
 
  - fail because your package.json & node_modules disagree, i.e.
-    your installed something without `--save` or hand edited your
+    you installed something without `--save` or hand edited your
     package.json
  - succeed, and add all top level dependencies to your
     npm-shrinkwrap.json file and then runs `npm-shrinkwrap sync`
