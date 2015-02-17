@@ -53,6 +53,8 @@ function setResolved(opts, callback) {
 
         json['npm-shrinkwrap-version'] = version;
 
+        json['node-version'] = process.version;
+
         json = fixResolved(json, null);
 
         // if top level shrinkwrap has a `from` or `resolved`
