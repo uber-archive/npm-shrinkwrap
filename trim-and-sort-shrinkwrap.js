@@ -55,6 +55,7 @@ function recursiveSorted(json) {
         'from',
         'resolved',
         'npm-shrinkwrap-version',
+        'node-version',
         'dependencies'
     ]);
 
