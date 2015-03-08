@@ -195,7 +195,7 @@ function npmShrinkwrap(opts, callback) {
 
                 newShrinkwrap = sortedObject(newShrinkwrap);
 
-                var buf = JSON.stringify(newShrinkwrap, null, 2);
+                var buf = JSON.stringify(newShrinkwrap, null, 2) + '\n';
                 fs.writeFile(fileName, buf, 'utf8', onshrinkwrap);
             }
         }
@@ -234,7 +234,7 @@ function npmShrinkwrap(opts, callback) {
                     newShrinkwrap, opts);
             }
 
-            var buf = JSON.stringify(newShrinkwrap, null, 2);
+            var buf = JSON.stringify(newShrinkwrap, null, 2) + '\n';
             fs.writeFile(fileName, buf, 'utf8', function (err) {
                 if (err) {
                     return callback(err);

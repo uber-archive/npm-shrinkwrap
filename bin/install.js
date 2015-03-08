@@ -32,7 +32,7 @@ function installModule(opts, callback) {
                 opts.packageVersion;
         }
 
-        fs.writeFile(file, JSON.stringify(package, null, 2),
+        fs.writeFile(file, JSON.stringify(package, null, 2) + '\n',
             'utf8', callback);
     });
 }

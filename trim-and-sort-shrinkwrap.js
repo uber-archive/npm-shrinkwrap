@@ -95,7 +95,7 @@ function trimFrom(opts, callback) {
                 json = replaceFields(json, replacer);
 
                 fs.writeFile(shrinkwrapFile,
-                    JSON.stringify(json, null, 2), callback);
+                    JSON.stringify(json, null, 2) + '\n', callback);
             });
         });
     }
