@@ -151,6 +151,12 @@ npm-shrinkwrap NOTES:
  - `trimFrom()` also sorts and rewrites the package.json
     for consistency
 
+ - By default, the npm-shrinkwrap algorithm does not dedupe
+   nested dependencies. This means that the shrinkwrap is
+   closer to the installed dependencies by default. If this
+   is not desired `--keepNested=false` can be passed to the
+   shrinkwrap cli
+
 ## Installation
 
 `npm install npm-shrinkwrap`
