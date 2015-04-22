@@ -13,9 +13,15 @@ function printHelp(opts) {
         cmd: opts.cmd || 'npm-shrinkwrap'
     });
 
-    return console.log(msee.parse(content, {
+    if (opts.h) {
+        content = content.split('##')[0];
+    }
+
+    var text = msee.parse(content, {
         paragraphStart: '\n'
-    }));
+    });
+
+    return console.log(text);
 }
 
 module.exports = printHelp;
