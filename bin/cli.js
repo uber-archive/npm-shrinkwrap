@@ -30,7 +30,7 @@ function main(opts, callback) {
 
     opts.keepNested = 'keep-nested' in opts ?
         !!opts['keep-nested'] : 'keepNested' in opts ?
-        !!opts.keepNested : false;
+        !!opts.keepNested : true;
 
     opts.warnOnNotSemver = opts.warnOnNotSemver ?
         opts.warnOnNotSemver : true;
