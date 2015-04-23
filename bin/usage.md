@@ -7,9 +7,13 @@ Verifies your `package.json` and `node_modules` are in sync.
 Basically like `npm shrinkwrap` but better
 
 Options:
-    --dirname   sets the directory location of the package.json
-
- - `--dirname` defaults to `process.cwd()`
+  --dirname           sets the directory location of the package.json
+                      defaults to `process.cwd()`.
+  --keep-nested       If set, will not remove nested changes.
+  --warnOnNotSemver   If set, will downgrade invalid semver errors
+                      to warnings
+  --dev               If set, will shrinkwrap dev dependencies
+  --silent            If set, will be silent.
 
 ## `{cmd} --help`
 
