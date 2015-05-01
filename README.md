@@ -21,7 +21,7 @@ When you run `npm-shrinkwrap` it will either:
 
 ## Motivation
 
-### Verify local correct ness
+### Verify local correctness
 
 We need to verify that `package.json`, `npm-shrinkwrap.json` and
   `node_modules` all have the same content.
