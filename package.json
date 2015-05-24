@@ -51,6 +51,7 @@
   "bin": {
     "npm-shrinkwrap": "./bin/cli.js"
   },
+  "license": "MIT",
   "engine": {
     "node": ">= 0.10.x"
   }
