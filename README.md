@@ -220,8 +220,10 @@ You can pass it either a path to a file or a git shaism.
 
 Example:
 
-`npm-shrinkwrap diff HEAD npm-shrinkwrap.json`
-`npm-shrinkwrap diff origin/master HEAD`
+```
+npm-shrinkwrap diff HEAD npm-shrinkwrap.json
+npm-shrinkwrap diff origin/master HEAD
+```
 
 ```
 Options:
