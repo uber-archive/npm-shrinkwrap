@@ -167,6 +167,7 @@ Verifies your `package.json` and `node_modules` are in sync.
 
 Basically like `npm shrinkwrap` but better
 
+```
 Options:
   --dirname           sets the directory location of the package.json
                       defaults to `process.cwd()`.
@@ -175,6 +176,7 @@ Options:
                       to warnings
   --dev               If set, will shrinkwrap dev dependencies
   --silent            If set, will be silent.
+```
 
 #### `npm-shrinkwrap --help`
 
@@ -221,10 +223,12 @@ Example:
 `npm-shrinkwrap diff HEAD npm-shrinkwrap.json`
 `npm-shrinkwrap diff origin/master HEAD`
 
+```
 Options:
     --depth     configure the depth at which it prints
     --short     when set it will print add/remove tersely
     --dirname   configure which folder to run within
+```
 
  - `--depth` defaults to `0`
  - `--short` defaults to `false`
