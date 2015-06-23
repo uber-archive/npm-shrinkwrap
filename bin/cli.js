@@ -25,6 +25,11 @@ function main(opts, callback) {
         return printHelp(opts);
     }
 
+    // use global or local npm
+    opts.useGlobalNPM = 'use-global-npm' in opts?
+        !!opts['use-global-npm'] : 'useGlobalNPM' in opts ?
+        !!opts.useGlobalNPM : false;
+
     opts.dirname = opts.dirname ?
         path.resolve(opts.dirname) : process.cwd();
 

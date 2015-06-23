@@ -8,6 +8,14 @@ var npmShrinkwrap = require('../index.js');
 var PROJ = path.join(__dirname, 'proj');
 var SHA = 'e8db5304e8e527aa17093cd9de66725118d9b589';
 
+var OPT = PROJ;
+if (process.env.useGlobalNPM) {
+  OPT = {
+    dirname: PROJ,
+    useGlobalNPM: process.env.useGlobalNPM
+  };
+}
+
 function moduleFixture(name, version, opts) {
     opts = opts || {};
 
@@ -68,7 +76,7 @@ test('creates simple shrinkwrap', fixtures(__dirname, {
         }
     })
 }, function (assert) {
-    npmShrinkwrap(PROJ, function (err) {
+    npmShrinkwrap(OPT, function (err) {
         assert.ifError(err);
 
         var shrinkwrap = path.join(PROJ, 'npm-shrinkwrap.json');
@@ -136,7 +144,7 @@ test('error on removed module', fixtures(__dirname, {
     })
 }, function (assert) {
     // debugger;
-    npmShrinkwrap(PROJ, function (err) {
+    npmShrinkwrap(OPT, function (err) {
         assert.ok(err);
 
         assert.notEqual(err.message.indexOf(
@@ -152,7 +160,7 @@ test('error on additional module', fixtures(__dirname, {
         'node_modules': {}
     })
 }, function (assert) {
-    npmShrinkwrap(PROJ, function (err) {
+    npmShrinkwrap(OPT, function (err) {
         assert.ok(err);
 
         assert.notEqual(err.message.indexOf(
@@ -170,7 +178,7 @@ test('error on invalid module', fixtures(__dirname, {
         }
     })
 }, function (assert) {
-    npmShrinkwrap(PROJ, function (err) {
+    npmShrinkwrap(OPT, function (err) {
         assert.ok(err);
 
         assert.notEqual(err.message.indexOf(
@@ -189,7 +197,7 @@ test('error on removed GIT module', fixtures(__dirname, {
     })
 }, function (assert) {
     // debugger;
-    npmShrinkwrap(PROJ, function (err) {
+    npmShrinkwrap(OPT, function (err) {
         assert.ok(err);
 
         assert.notEqual(err.message.indexOf(
@@ -204,14 +212,21 @@ test('error on additional GIT module', fixtures(__dirname, {
         dependencies: {
             'foo': 'git://github.com:uber/foo#v1.0.0'
         },
-        'node_modules': {}
+        'node_modules': {},
+        nonono: 1
     })
 }, function (assert) {
-    npmShrinkwrap(PROJ, function (err) {
+    npmShrinkwrap(OPT, function (err) {
         assert.ok(err);
 
         assert.notEqual(err.message.indexOf(
-            'missing: foo@git://github.com:uber/foo#v1.0.0'), -1);
+            'missing: foo@git://github.com'), -1);
+
+        assert.notEqual(err.message.indexOf(
+            'uber/foo'), -1);
+
+        assert.notEqual(err.message.indexOf(
+            '#v1.0.0'), -1);
 
         assert.end();
     });
@@ -227,7 +242,7 @@ test('error on invalid GIT module', fixtures(__dirname, {
         }
     })
 }, function (assert) {
-    npmShrinkwrap(PROJ, function (err) {
+    npmShrinkwrap(OPT, function (err) {
         assert.ok(err);
 
         assert.notEqual(err ? err.message.indexOf(

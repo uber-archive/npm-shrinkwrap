@@ -49,6 +49,7 @@ ehthumbs.db
 Icon?
 Thumbs.db
 coverage
+test/proj
 
 # Text Editor Byproducts #
 ##########################
