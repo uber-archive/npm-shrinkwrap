@@ -2,6 +2,13 @@ var test = require('tape');
 var fixtures = require('fixtures-fs');
 var path = require('path');
 var fs = require('fs');
+var mkdirp = require("mkdirp");
+
+// a hack to workaround fixtures-fs
+// override fs.mkdirp and leaving all other functions intact
+var _fs = Object.create(fs);
+_fs.mkdir = mkdirp;
+
 
 var npmShrinkwrap = require('../index.js');
 
@@ -99,6 +106,59 @@ test('creates simple shrinkwrap', fixtures(__dirname, {
         });
     });
 }));
+
+test('creates simple shrinkwrap for scoped package', fixtures(__dirname, {
+    'proj': moduleFixture('proj', '0.1.0', {
+        dependencies: {
+            "@th507/foo": '1.0.0'
+        },
+        'node_modules': {
+            '@th507/foo': moduleFixture('@th507/foo', '1.0.0')
+        }
+    })
+}, function (assert) {
+    // old version of npm which is bundled w/ this package
+    // does not support scoped package and will failed
+    // setting use-global-npm for this test case only
+    var _OPT;
+    if (typeof OPT === "string") {
+        _OPT = {
+            dirname: OPT,
+            useGlobalNPM: 1
+        };
+    }
+    else {
+        _OPT = Object.create(OPT);
+        _OPT.useGlobalNPM = 1;
+    }
+
+    npmShrinkwrap(_OPT, function (err) {
+        assert.ifError(err);
+
+        var shrinkwrap = path.join(PROJ, 'npm-shrinkwrap.json');
+        fs.readFile(shrinkwrap, 'utf8', function (err, file) {
+            assert.ifError(err);
+            assert.notEqual(file, '');
+
+            var json = JSON.parse(file);
+
+            assert.equal(json.name, 'proj');
+            assert.equal(json.version, '0.1.0');
+            assert.deepEqual(json.dependencies, {
+                '@th507/foo': {
+                    version: '1.0.0',
+                    resolved: 'https://registry.npmjs.org/@th507/foo/-/@th507/foo-1.0.0.tgz'
+                }
+            });
+
+            assert.end();
+        });
+    });
+}, {
+  mkdirp: mkdirp,
+  fs: _fs
+}));
+
 
 test('create shrinkwrap for git dep', fixtures(__dirname, {
     'proj': moduleFixture('proj', '0.1.0', {

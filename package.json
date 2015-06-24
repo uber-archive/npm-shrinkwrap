@@ -31,6 +31,7 @@
     "fixtures-fs": "^2.0.0",
     "istanbul": "~0.3.2",
     "jshint": "2.5.6",
+    "mkdirp": "^0.5.1",
     "pre-commit": "0.0.9",
     "tap-spec": "~1.0.0",
     "tape": "^3.0.2"
