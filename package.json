@@ -37,9 +37,7 @@
     "tape": "^3.0.2"
   },
   "scripts": {
-    "pretest": "rm -fr test/proj /tmp/proj",
     "test": "npm run jshint -s && NODE_ENV=test node test/index.js | tap-spec",
-    "pretest-global-npm": "rm -fr test/proj",
     "test-global-npm": "npm run jshint -s && NODE_ENV=test useGlobalNPM=0 node test/index.js | tap-spec",
     "unit-test": "NODE_ENV=test node test/npm-shrinkwrap.js | tap-spec",
     "jshint-pre-commit": "jshint --verbose $(git diff --cached --name-only | grep '\\.js$')",

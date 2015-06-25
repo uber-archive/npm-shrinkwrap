@@ -272,8 +272,7 @@ test('error on additional GIT module', fixtures(__dirname, {
         dependencies: {
             'foo': 'git://github.com:uber/foo#v1.0.0'
         },
-        'node_modules': {},
-        nonono: 1
+        'node_modules': {}
     })
 }, function (assert) {
     npmShrinkwrap(OPT, function (err) {
