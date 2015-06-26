@@ -2,13 +2,6 @@ var test = require('tape');
 var fixtures = require('fixtures-fs');
 var path = require('path');
 var fs = require('fs');
-var mkdirp = require("mkdirp");
-
-// a hack to workaround fixtures-fs
-// override fs.mkdirp and leaving all other functions intact
-var _fs = Object.create(fs);
-_fs.mkdir = mkdirp;
-
 
 var npmShrinkwrap = require('../index.js');
 
@@ -113,12 +106,14 @@ test('creates simple shrinkwrap for scoped package', fixtures(__dirname, {
             "@th507/foo": '1.0.0'
         },
         'node_modules': {
-            '@th507/foo': moduleFixture('@th507/foo', '1.0.0')
+            '@th507' : {
+                'foo': moduleFixture('@th507/foo', '1.0.0')
+            }
         }
     })
 }, function (assert) {
     // old version of npm which is bundled w/ this package
-    // does not support scoped package and will failed
+    // does not support scoped package and will failed.
     // setting use-global-npm for this test case only
     var _OPT;
     if (typeof OPT === "string") {
@@ -154,9 +149,6 @@ test('creates simple shrinkwrap for scoped package', fixtures(__dirname, {
             assert.end();
         });
     });
-}, {
-  mkdirp: mkdirp,
-  fs: _fs
 }));
 
 
