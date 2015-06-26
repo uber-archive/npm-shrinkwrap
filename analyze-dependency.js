@@ -95,6 +95,10 @@ function analyzeDependency(name, gitLink, opts, cb) {
 
 function parseTag(value) {
     var uri = url.parse(value);
+    
+    if (isFileUrl(uri)) {
+      return null;
+    }
 
     if (isGitUrl(uri)) {
         return {
@@ -123,6 +127,10 @@ function isGitUrl (url) {
         case "git+ssh:":
             return true;
     }
+}
+
+function isFileUrl (url) {
+    return url.protocol === 'file:';
 }
 
 function parseVersion(tag) {
