@@ -113,6 +113,8 @@ function isCorrect(filePath, dep, opts, cb) {
         resolvedUri.protocol === 'git+https:'
     ) {
         isCorrectSHA(filePath, dep, cb);
+    } else if (resolvedUri.protocol === 'file:') {
+        isCorrectFileProtocol(filePath, dep, cb);
     } else {
         cb(new Error('unsupported protocol ' +
             resolvedUri.protocol));
@@ -168,6 +170,14 @@ function isCorrectSHA(filePath, dep, cb) {
 
         cb(null, dep);
     });
+}
+
+function isCorrectFileProtocol(filePath, dep, cb) {
+  // Always force a reinstall of file modules, in case the version in node_modules
+  // is different from the file. This can happen as npm copies the directory into
+  // node_modules, instead of symlinking it (unless you use something like linklocal)
+  dep.correct = false;
+  cb(null, dep);
 }
 
 function getSha(uri) {
