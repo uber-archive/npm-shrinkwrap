@@ -2,7 +2,7 @@ var path = require('path');
 // var fs = require('fs');
 // var readJSON = require('read-json');
 var parallel = require('run-parallel');
-var npm = require('npm');
+var loadNPM = require('../load-npm.js');
 // var rimraf = require('rimraf');
 
 var read = require('./read.js');
@@ -30,7 +30,7 @@ function syncShrinkwrap(opts, cb) {
         npmOpts.registry = opts.registry;
     }
 
-    npm.load(npmOpts, function (err, npm) {
+    loadNPM(opts.useGlobalNPM, npmOpts, function (err, npm) {
         if (err) {
             return cb(err);
         }
