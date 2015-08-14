@@ -39,39 +39,75 @@ function purgeExcess(dir, shrinkwrap, opts, cb) {
     deps.
 */
 function findExcess(dir, shrinkwrap, opts, cb) {
-    fs.readdir(dir, function (err, files) {
+    fs.readdir(dir, function (err, _files) {
         if (err) {
             return cb(err);
         }
 
-        files = files.map(function (file) {
-            return file.toLowerCase();
-        }).filter(function (file) {
+        var files = [];
+
+        function next(callback) {
+            callback(null);
+        }
+
+        var tasks = _files.map(function(file) {
             // remove node_modules/.bin from check
-            return file !== '.bin';
+            if (/\.bin$/.test(file)) {
+                return next;
+            }
+
+            if (!(file[0] === "@" && file.indexOf("/") === -1)) {
+                files.push(file);
+                return next;
+            }
+
+            // remove scoped packages in node_modules
+            return function(callback) {
+                fs.readdir(path.join(dir, file), function(err, subDirFiles) {
+                    if (err) {
+                        return callback(err);
+                    }
+
+                    [].push.apply(files, subDirFiles.map(function(sub) {
+                        return path.join(file, sub);
+                    }));
+
+                    callback(null);
+                });
+            };
         });
 
-        if (opts.dev && shrinkwrap.devDependencies) {
-            var devDeps = shrinkwrap.devDependencies;
-            var devKeys = Object.keys(devDeps).map(function (s) {
+        parallel(tasks, function(err) {
+           if (err) {
+                return cb(err);
+           }
+
+            files = files.map(function(file) {
+                return file.toLowerCase();
+            });
+
+            if (opts.dev && shrinkwrap.devDependencies) {
+                var devDeps = shrinkwrap.devDependencies;
+                var devKeys = Object.keys(devDeps).map(function (s) {
+                    return s.toLowerCase();
+                });
+
+                files = files.filter(function (file) {
+                    // remove anything that is a dev dep
+                    return devKeys.indexOf(file) === -1;
+                });
+            }
+
+            var deps = shrinkwrap.dependencies || {};
+            var keys = Object.keys(deps).map(function (s) {
                 return s.toLowerCase();
             });
 
-            files = files.filter(function (file) {
-                // remove anything that is a dev dep
-                return devKeys.indexOf(file) === -1;
-            });
-        }
-
-        var deps = shrinkwrap.dependencies || {};
-        var keys = Object.keys(deps).map(function (s) {
-            return s.toLowerCase();
+            // return all files in node_modules that are not
+            // in npm-shrinkwrap.json
+            cb(null, files.filter(function (file) {
+                return keys.indexOf(file) === -1;
+            }));
         });
-
-        // return all files in node_modules that are not
-        // in npm-shrinkwrap.json
-        cb(null, files.filter(function (file) {
-            return keys.indexOf(file) === -1;
-        }));
     });
 }

@@ -14,6 +14,9 @@ test('npm-shrinkwrap --dev on git+https uri', fixtures(__dirname, {
         'package.json': JSON.stringify({
             name: 'foo',
             version: '0.1.0',
+            description: "",
+            respository: "",
+            private: true, // hack to hide no readme warning
             dependencies: {},
             devDependencies: {
                 'gulp-yuidoc': 'git://github.com/' +
@@ -35,6 +38,7 @@ test('npm-shrinkwrap --dev on git+https uri', fixtures(__dirname, {
         shrinkwrapCli({
             dirname: PROJ,
             dev: true,
+            useGlobalNPM: process.env.useGlobalNPM,
             _: []
         }, function (err) {
             assert.ifError(err);

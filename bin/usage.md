@@ -14,6 +14,7 @@ Options:
                       to warnings
   --dev               If set, will shrinkwrap dev dependencies
   --silent            If set, will be silent.
+  --use-global-npm    If set, will use global npm instead of bundled version
 
 ## `{cmd} --help`
 
