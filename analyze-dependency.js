@@ -1,7 +1,7 @@
 var url = require('url');
 var validSemver = require('semver').valid;
 var path = require('path');
-var readJSON = require('read-json');
+var readJSON = require('./read-json');
 
 var errors = require('./errors.js');
 

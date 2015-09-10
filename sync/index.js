@@ -1,9 +1,6 @@
 var path = require('path');
-// var fs = require('graceful-fs');
-// var readJSON = require('read-json');
 var parallel = require('run-parallel');
 var npm = require('npm');
-// var rimraf = require('rimraf');
 
 var read = require('./read.js');
 var forceInstall = require('./force-install.js');
