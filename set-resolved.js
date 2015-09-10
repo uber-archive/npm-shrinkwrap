@@ -1,7 +1,7 @@
 var path = require('path');
-var fs = require('fs');
+var fs = require('graceful-fs');
 var template = require('string-template');
-var readJSON = require('read-json');
+var readJSON = require('./read-json');
 var url = require('url');
 var semver = require('semver');
 

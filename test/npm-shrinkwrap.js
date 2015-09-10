@@ -1,7 +1,7 @@
 var test = require('tape');
 var fixtures = require('fixtures-fs');
 var path = require('path');
-var fs = require('fs');
+var fs = require('graceful-fs');
 
 var npmShrinkwrap = require('../index.js');
 

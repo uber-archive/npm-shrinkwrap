@@ -1,6 +1,6 @@
 var parallel = require('run-parallel');
 var path = require('path');
-var readJSON = require('read-json');
+var readJSON = require('../read-json');
 var jsonDiff = require('json-diff');
 var colorize = require('json-diff/lib/colorize');
 var exec = require('child_process').exec;

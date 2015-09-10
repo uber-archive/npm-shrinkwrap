@@ -1,6 +1,6 @@
 var test = require('tape');
 var path = require('path');
-var fs = require('fs');
+var fs = require('graceful-fs');
 var safeJsonParse = require('safe-json-parse');
 var fixtures = require('fixtures-fs');
 var exec = require('child_process').exec;

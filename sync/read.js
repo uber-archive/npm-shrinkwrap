@@ -1,5 +1,5 @@
 var path = require('path');
-var readJSON = require('read-json');
+var readJSON = require('../read-json');
 var TypedError = require('error/typed');
 
 var FileNotFound = TypedError({

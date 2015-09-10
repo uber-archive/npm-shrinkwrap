@@ -1,5 +1,5 @@
 var path = require('path');
-var readJSON = require('read-json');
+var readJSON = require('./read-json');
 var parallel = require('run-parallel');
 
 var analyzeDependency = require('./analyze-dependency.js');
