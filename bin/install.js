@@ -1,6 +1,6 @@
 var path = require('path');
 var readJSON = require('read-json');
-var fs = require('fs');
+var fs = require('graceful-fs');
 var template = require('string-template');
 
 var version = require('../package.json').version;

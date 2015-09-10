@@ -1,5 +1,5 @@
 var path = require('path');
-// var fs = require('fs');
+// var fs = require('graceful-fs');
 // var readJSON = require('read-json');
 var parallel = require('run-parallel');
 var npm = require('npm');

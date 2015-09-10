@@ -1,4 +1,4 @@
-var fs = require('fs');
+var fs = require('graceful-fs');
 var path = require('path');
 var url = require('url');
 var safeJsonParse = require('safe-json-parse');

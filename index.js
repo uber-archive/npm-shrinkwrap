@@ -1,7 +1,7 @@
 var ValidationError = require('error/validation');
 var find = require('array-find');
 var path = require('path');
-var fs = require('fs');
+var fs = require('graceful-fs');
 var sortedObject = require('sorted-object');
 var readJSON = require('read-json');
 

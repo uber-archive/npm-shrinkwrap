@@ -1,5 +1,5 @@
 var path = require('path');
-var fs = require('fs');
+var fs = require('graceful-fs');
 var msee = require('msee');
 var template = require('string-template');
 

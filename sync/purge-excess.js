@@ -1,5 +1,5 @@
 var path = require('path');
-var fs = require('fs');
+var fs = require('graceful-fs');
 var parallel = require('run-parallel');
 var rimraf = require('rimraf');
 
