@@ -31,8 +31,7 @@ Currently npm verifies most things but doesn't verify git
 
 The edge case npm doesn't handle is if you change the tag in 
   your package.json. npm happily says that the dependency in
-  your node_modules tree is valid irregardless of what tag it
-  is.
+  your node_modules tree is valid regardless of what tag it is.
 
 ### Consistently set a `resolved` field.
 
