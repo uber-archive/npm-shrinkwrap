@@ -237,7 +237,13 @@ Options:
 
 ## Installation
 
+For usage with npm@1
+
 `npm install npm-shrinkwrap`
+
+For usage with npm@2
+
+`npm install npm-shrinkwrap@200.x`
 
 ## Tests
 
