@@ -53,6 +53,28 @@ function gitModuleFixture(name, version, opts) {
     return module;
 }
 
+function gitSSHModuleFixture(name, version, opts) {
+    opts = opts || {};
+
+    var module = {
+        'package.json': JSON.stringify({
+            name : name,
+            _id: name + '@' + version,
+            _from: 'git+ssh://git@github.com:uber/' + name + '#v' + version,
+            _resolved: 'git+ssh://git@github.com/uber/' + name + '#' + SHA,
+            version: version,
+            dependencies: opts.dependencies || undefined
+        })
+    };
+
+    /*jshint camelcase: false*/
+    if (opts.node_modules) {
+        module.node_modules = opts.node_modules;
+    }
+
+    return module;
+}
+
 test('npmShrinkwrap is a function', function (assert) {
     assert.strictEqual(typeof npmShrinkwrap, 'function');
     assert.end();
@@ -119,6 +141,41 @@ test('create shrinkwrap for git dep', fixtures(__dirname, {
                     version: '2.0.0',
                     from: 'bar@git://github.com/uber/bar#' + SHA,
                     resolved: 'git://github.com/uber/bar#' + SHA
+                }
+            });
+
+            assert.end();
+        });
+    });
+}));
+
+test('create shrinkwrap for git+ssh dep', fixtures(__dirname, {
+    'proj': moduleFixture('proj', '0.1.0', {
+        dependencies: {
+            baz: 'git+ssh://git@github.com:uber/baz#v2.0.0'
+        },
+        'node_modules': {
+            'baz': gitSSHModuleFixture('baz', '2.0.0')
+        }
+    })
+}, function (assert) {
+    npmShrinkwrap(PROJ, function (err) {
+        assert.ifError(err);
+
+        var shrinkwrap = path.join(PROJ, 'npm-shrinkwrap.json');
+        fs.readFile(shrinkwrap, 'utf8', function (err, file) {
+            assert.ifError(err);
+            assert.notEqual(file, '');
+
+            var json = JSON.parse(file);
+
+            assert.equal(json.name, 'proj');
+            assert.equal(json.version, '0.1.0');
+            assert.deepEqual(json.dependencies, {
+                baz: {
+                    version: '2.0.0',
+                    from: 'baz@git+ssh://git@github.com/uber/baz#' + SHA,
+                    resolved: 'git+ssh://git@github.com/uber/baz#' + SHA
                 }
             });
 

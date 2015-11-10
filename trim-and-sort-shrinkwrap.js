@@ -143,8 +143,20 @@ function trimFrom(opts, callback) {
 
         // replace the from shaIsm with the resolved shaIsm
         if (shaIsm !== resolveShaism) {
-            return opts.name + '@' +
-                opts.fromValue.replace(shaIsm, resolveShaism);
+            var pathname = opts.fromUri.pathname;
+            // normalize git+ssh links with a ':' after the host instead of a '/'
+            if (pathname[1] === ':') {
+                pathname = pathname[0] + pathname.slice(2);
+            }
+            var newValue = url.format({
+                protocol: opts.fromUri.protocol,
+                slashes: opts.fromUri.slashes,
+                auth: opts.fromUri.auth,
+                host: opts.fromUri.host,
+                pathname: pathname,
+                hash: resolveShaism
+            });
+            return opts.name + '@' + newValue;
         }
 
         return opts.name + '@' + opts.fromValue;
