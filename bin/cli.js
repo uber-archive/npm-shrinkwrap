@@ -96,16 +96,17 @@ function main(opts, callback) {
             return callback(null, warnings);
         }
 
+        if (!opts.silent) {
+            console.log('wrote npm-shrinkwrap.json');
+        }
+
         if (warnings) {
             if (opts.onwarn) {
                 opts.onwarn(warnings);
             } else {
                 printWarnings({ errors: warnings }, formatters);
             }
-        }
-
-        if (!opts.silent) {
-            console.log('wrote npm-shrinkwrap.json');
+            return process.exit(2);
         }
     });
 }
