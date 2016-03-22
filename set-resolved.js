@@ -84,6 +84,25 @@ function setResolved(opts, callback) {
             json.resolved = rewriteResolved(json.resolved);
         }
 
+        var u;
+
+        // Handle the annoying / vs : on resolved & from
+        if (json.resolved && json.resolved.indexOf('git+ssh://') > -1) {
+            u = url.parse(json.resolved);
+            if (u.pathname.indexOf('/:') === 0) {
+                u.pathname = u.pathname[0] + u.pathname.slice(2, u.pathname.length);
+                json.resolved = url.format(u);
+            }
+        }
+
+        if (json.from && json.from.indexOf('git+ssh://') > -1) {
+            u = url.parse(json.from);
+            if (u.pathname.indexOf('/:') === 0) {
+                u.pathname = u.pathname[0] + u.pathname.slice(2, u.pathname.length);
+                json.from = url.format(u);
+            }
+        }
+
         if (json.dependencies) {
             Object.keys(json.dependencies).forEach(function (dep) {
                 fixResolved(json.dependencies[dep], dep);
