@@ -202,7 +202,7 @@ test('error on removed GIT module', fixtures(__dirname, {
 test('error on additional GIT module', fixtures(__dirname, {
     proj: moduleFixture('proj', '0.1.0', {
         dependencies: {
-            'foo': 'git://github.com:uber/foo#v1.0.0'
+            'foo': 'git://github.com/uber/foo#v1.0.0'
         },
         'node_modules': {}
     })
@@ -211,7 +211,7 @@ test('error on additional GIT module', fixtures(__dirname, {
         assert.ok(err);
 
         assert.notEqual(err.message.indexOf(
-            'missing: foo@git://github.com:uber/foo#v1.0.0'), -1);
+            'missing: foo@git://github.com/uber/foo.git#v1.0.0'), -1);
 
         assert.end();
     });
