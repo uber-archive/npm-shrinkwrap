@@ -18,7 +18,7 @@
     "minimist": "^1.1.0",
     "msee": "^0.1.1",
     "npm": "^2.1.10",
-    "read-json": "0.1.0",
+    "read-json": "1.0.3",
     "rimraf": "^2.2.8",
     "run-parallel": "^1.0.0",
     "run-series": "^1.0.2",
