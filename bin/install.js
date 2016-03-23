@@ -1,5 +1,5 @@
 var path = require('path');
-var readJSON = require('read-json');
+var readJSON = require('../read-json');
 var fs = require('fs');
 var template = require('string-template');
 
