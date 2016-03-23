@@ -1,6 +1,5 @@
 var path = require('path');
 // var fs = require('fs');
-// var readJSON = require('read-json');
 var parallel = require('run-parallel');
 var npm = require('npm');
 // var rimraf = require('rimraf');

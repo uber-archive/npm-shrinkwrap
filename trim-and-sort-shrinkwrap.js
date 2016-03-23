@@ -4,7 +4,7 @@ var url = require('url');
 var safeJsonParse = require('safe-json-parse');
 var parallel = require('run-parallel');
 var sortedObject = require('sorted-object');
-var readJSON = require('read-json');
+var readJSON = require('./read-json');
 
 var errors = require('./errors.js');
 
