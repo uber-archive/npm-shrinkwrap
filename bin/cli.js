@@ -37,6 +37,8 @@ function main(opts, callback) {
 
     opts.cmd = opts.cmd || 'npm-shrinkwrap';
 
+    opts.limit = opts.limit || 0;
+
     if (command === 'install') {
         return installModule(opts, function (err) {
             if (err) {

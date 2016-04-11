@@ -1,6 +1,6 @@
 {
   "name": "npm-shrinkwrap",
-  "version": "200.4.0",
+  "version": "200.5.0",
   "description": "A consistent shrinkwrap tool",
   "keywords": [],
   "author": "Raynos <raynos2@gmail.com>",
@@ -20,7 +20,7 @@
     "npm": "^2.1.10",
     "read-json": "0.1.0",
     "rimraf": "^2.2.8",
-    "run-parallel": "^1.0.0",
+    "run-parallel-limit": "^1.0.3",
     "run-series": "^1.0.2",
     "safe-json-parse": "^2.0.0",
     "semver": "^4.0.3",

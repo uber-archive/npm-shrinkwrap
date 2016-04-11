@@ -1,6 +1,6 @@
 var path = require('path');
 var readJSON = require('read-json');
-var parallel = require('run-parallel');
+var parallelLimit = require('run-parallel-limit');
 
 var analyzeDependency = require('./analyze-dependency.js');
 
@@ -23,10 +23,10 @@ function verifyGit(opts, callback) {
         var deps = package.dependencies || {};
         var devDeps = package.devDependencies || {};
 
-        parallel([
+        parallelLimit([
             analyze.bind(null, deps, opts),
             opts.dev ? analyze.bind(null, devDeps, opts) : null
-        ].filter(Boolean), function (err, values) {
+        ].filter(Boolean), opts.limit, function (err, values) {
             if (err) {
                 return callback(err);
             }
@@ -44,7 +44,7 @@ function analyze(deps, opts, callback) {
             key, deps[key], opts);
     });
 
-    parallel(tasks, function (err, results){
+    parallelLimit(tasks, opts.limit, function (err, results){
         if (err) {
             return callback(err);
         }

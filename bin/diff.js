@@ -1,4 +1,4 @@
-var parallel = require('run-parallel');
+var parallelLimit = require('run-parallel-limit');
 var path = require('path');
 var readJSON = require('read-json');
 var jsonDiff = require('json-diff');
@@ -123,14 +123,14 @@ function main(opts, callback) {
     opts.depth = 'depth' in opts ? opts.depth : 0;
     var cwd = opts.dirname || process.cwd();
 
-    parallel([
+    parallelLimit([
         isFile(fileA) ?
             readJSON.bind(null, path.resolved(cwd, fileA)) :
             gitShow.bind(null, fileA, cwd),
         isFile(fileB) ?
             readJSON.bind(null, path.resolve(cwd, fileB)) :
             gitShow.bind(null, fileB, cwd)
-    ], function (err, files) {
+    ], opts.limit, function (err, files) {
         if (err) {
             return callback(err);
         }
