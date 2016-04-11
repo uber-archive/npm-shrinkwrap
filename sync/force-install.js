@@ -1,6 +1,6 @@
 var path = require('path');
 var url = require('url');
-var parallel = require('run-parallel');
+var parallelLimit = require('run-parallel-limit');
 var series = require('run-series');
 var template = require('string-template');
 
@@ -38,7 +38,7 @@ function forceInstall(nodeModules, shrinkwrap, opts, cb) {
     tasks.push(purgeExcess.bind(
         null, nodeModules, shrinkwrap, opts));
 
-    parallel(tasks, function (err, results) {
+    parallelLimit(tasks, opts.limit, function (err, results) {
         if (err) {
             return cb(err);
         }
@@ -90,7 +90,7 @@ function forceInstall(nodeModules, shrinkwrap, opts, cb) {
 
         var tasks = [].concat(inCorrectTasks, correctTasks);
 
-        parallel(tasks, cb);
+        parallelLimit(tasks, opts.limit, cb);
     });
 }
 

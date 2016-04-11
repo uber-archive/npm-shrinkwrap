@@ -1,7 +1,7 @@
 var path = require('path');
 // var fs = require('fs');
 // var readJSON = require('read-json');
-var parallel = require('run-parallel');
+var parallelLimit = require('run-parallel-limit');
 var npm = require('npm');
 // var rimraf = require('rimraf');
 
@@ -37,10 +37,10 @@ function syncShrinkwrap(opts, cb) {
 
         opts.npm = npm;
 
-        parallel({
+        parallelLimit({
             shrinkwrap: read.shrinkwrap.bind(null, dirname),
             devDependencies: read.devDependencies.bind(null, dirname)
-        }, function (err, tuple) {
+        }, opts.limit, function (err, tuple) {
             if (err) {
                 return cb(err);
             }

@@ -1,6 +1,6 @@
 var path = require('path');
 var fs = require('fs');
-var parallel = require('run-parallel');
+var parallelLimit = require('run-parallel-limit');
 var rimraf = require('rimraf');
 
 module.exports = purgeExcess;
@@ -31,7 +31,7 @@ function purgeExcess(dir, shrinkwrap, opts, cb) {
             return rimraf.bind(null, filePath);
         });
 
-        parallel(tasks, cb);
+        parallelLimit(tasks, opts.limit, cb);
     });
 }
 

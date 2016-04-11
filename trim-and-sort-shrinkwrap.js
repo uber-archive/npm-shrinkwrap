@@ -2,7 +2,7 @@ var fs = require('fs');
 var path = require('path');
 var url = require('url');
 var safeJsonParse = require('safe-json-parse');
-var parallel = require('run-parallel');
+var parallelLimit = require('run-parallel-limit');
 var sortedObject = require('sorted-object');
 var readJSON = require('read-json');
 
@@ -69,10 +69,10 @@ function trimFrom(opts, callback) {
     var shrinkwrapFile = path.join(opts.dirname, 'npm-shrinkwrap.json');
     var registries = opts.registries || ['registry.npmjs.org'];
 
-    parallel([
+    parallelLimit([
         fixShrinkwrap,
         fixPackage.bind(null, opts.dirname)
-    ], callback);
+    ], opts.limit, callback);
 
 
     function fixShrinkwrap(callback) {

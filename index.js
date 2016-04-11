@@ -18,7 +18,7 @@ var ERRORS = require('./errors.js');
      - run `npm ls` to verify that node_modules & package.json
         agree.
 
-     - run `verifyGit()` which has a similar algorithm to 
+     - run `verifyGit()` which has a similar algorithm to
         `npm ls` and will verify that node_modules & package.json
         agree for all git links.
 
@@ -65,6 +65,7 @@ function npmShrinkwrap(opts, callback) {
     if (typeof opts === 'string') {
         opts = { dirname: opts };
     }
+    opts.limit = opts.limit || 0;
 
     var _warnings = null;
     var _oldShrinkwrap = null;
@@ -288,11 +289,11 @@ function npmShrinkwrap(opts, callback) {
         callback(null, warnings);
     }
 }
- 
+
 module.exports = npmShrinkwrap;
 
 /*  you cannot call `npm.load()` twice with different prefixes.
-    
+
     The only fix is to clear the entire node require cache and
       get a fresh duplicate copy of the entire npm library
 */
