@@ -245,6 +245,8 @@ For usage with npm@2
 
 `npm install npm-shrinkwrap@200.x`
 
+**Note: npm >= 3 is not supported.**
+
 ## Tests
 
 `npm test`
