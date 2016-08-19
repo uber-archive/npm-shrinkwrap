@@ -293,3 +293,39 @@ test('error on invalid GIT module', fixtures(__dirname, {
         assert.end();
     });
 }));
+
+test('create shrinkwrap for scoped package', fixtures(__dirname, {
+    proj: moduleFixture('proj', '0.1.0', {
+        dependencies: {
+            '@uber/foo': '1.0.0'
+        },
+        'node_modules': {
+            '@uber': {
+                'foo': moduleFixture('@uber/foo', '1.0.0')
+            }
+        }
+    })
+}, function (assert) {
+    npmShrinkwrap(PROJ, function (err) {
+        assert.ifError(err);
+
+        var shrinkwrap = path.join(PROJ, 'npm-shrinkwrap.json');
+        fs.readFile(shrinkwrap, 'utf8', function (err, file) {
+            assert.ifError(err);
+            assert.notEqual(file, '');
+
+            var json = JSON.parse(file);
+
+            assert.equal(json.name, 'proj');
+            assert.equal(json.version, '0.1.0');
+            assert.deepEqual(json.dependencies, {
+                '@uber/foo': {
+                    version: '1.0.0',
+                    resolved: 'https://registry.npmjs.org/@uber/foo/-/@uber/foo-1.0.0.tgz'
+                }
+            });
+
+            assert.end();
+        });
+    });
+}));
