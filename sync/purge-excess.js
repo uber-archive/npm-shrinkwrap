@@ -17,7 +17,7 @@ function purgeExcess(dir, shrinkwrap, opts, cb) {
         opts = {};
     }
 
-    findExcess(dir, shrinkwrap, opts, function (err, excessFiles) {
+    findExcess(dir, shrinkwrap, opts, null, function (err, excessFiles) {
         if (err) {
             // if no node_modules then nothing to purge
             if (err.code === 'ENOENT') {
@@ -39,14 +39,15 @@ function purgeExcess(dir, shrinkwrap, opts, cb) {
 /* find any excess folders in node_modules that are not in
     deps.
 */
-function findExcess(dir, shrinkwrap, opts, cb) {
+function findExcess(dir, shrinkwrap, opts, scope, cb) {  // jshint ignore:line
     fs.readdir(dir, function (err, files) {
         if (err) {
             return cb(err);
         }
 
         parallel(files.map(function (file) {
-            return validateExcess.bind(null, dir, file, shrinkwrap, opts);
+            return validateExcess.bind(null, dir, file, shrinkwrap, opts,
+              scope);
         }), function (err, excessFiles) {
             if (err) {
                 return cb(err);
@@ -59,7 +60,7 @@ function findExcess(dir, shrinkwrap, opts, cb) {
 /* find any excess folders in node_modules that are not in
     deps.
 */
-function validateExcess(dir, file, shrinkwrap, opts, cb) { // jshint ignore:line
+function validateExcess(dir, file, shrinkwrap, opts, scope, cb) {  // jshint ignore:line
     file = file.toLowerCase();
 
     // don't consider node_modules/.bin
@@ -69,20 +70,10 @@ function validateExcess(dir, file, shrinkwrap, opts, cb) { // jshint ignore:line
 
     // consider top-level scoped packages only; e.g. those nested at the level
     // node_modules/{*}
-    var isScopedDir = file[0] === '@' && file.indexOf('/') === -1;
+    var isScopedDir = file[0] === '@';
     if (isScopedDir) {
-        return fs.readdir(path.join(dir, file), function (err, subdirFiles) {
-            if (err) {
-                return cb(err);
-            }
-
-            // independently validate the dependency for each of the children
-            // inside the scope directory
-            parallel(subdirFiles.map(function (subdirFile) {
-                return validateExcess.bind(null, dir, file + '/' + subdirFile,
-                  shrinkwrap, opts);
-            }), cb);
-        });
+        return findExcess(path.join(dir, scope + '/' + file), shrinkwrap, opts,
+          file, cb);
     }
 
     // the file is in excess if it does not exist in the package.json's
