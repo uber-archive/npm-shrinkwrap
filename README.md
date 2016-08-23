@@ -6,7 +6,7 @@ A consistent shrinkwrap tool
 
 `$ npm-shrinkwrap`
 
-This runs shrinkwrap, which verifies your package.json & 
+This runs shrinkwrap, which verifies your package.json &
   node_modules tree are in sync. If they are it runs shrinkwrap
   then fixes the resolved fields and trims from fields
 
@@ -26,10 +26,10 @@ When you run `npm-shrinkwrap` it will either:
 We need to verify that `package.json`, `npm-shrinkwrap.json` and
   `node_modules` all have the same content.
 
-Currently npm verifies most things but doesn't verify git 
-  completely. 
+Currently npm verifies most things but doesn't verify git
+  completely.
 
-The edge case npm doesn't handle is if you change the tag in 
+The edge case npm doesn't handle is if you change the tag in
   your package.json. npm happily says that the dependency in
   your node_modules tree is valid regardless of what tag it is.
 
@@ -51,9 +51,9 @@ This first is to ensure you install with `npm cache clean` so
   that an `npm ls` output is going to consistently give you the
   `resolved` and `from` fields.
 
-The second is to just delete all `from` fields from the 
-  generated shrinkwrap file since they change a lot but are 
-  never used. However you can only delete some `from` fields, 
+The second is to just delete all `from` fields from the
+  generated shrinkwrap file since they change a lot but are
+  never used. However you can only delete some `from` fields,
   not all.
 
 ### Human readable `diff`
@@ -68,7 +68,7 @@ npm-shrinkwrap diff master HEAD
 npm-shrinkwrap diff HEAD npm-shrinkwrap.json --short
 ```
 
-You can use this command to print out a readable context 
+You can use this command to print out a readable context
   specific diff of your shrinkwrap changes.
 
 ### Custom shrinkwrap validators
@@ -109,7 +109,7 @@ npm-shrinkwrap algorithm
  - run `npm ls` to verify that node_modules & package.json
     agree.
 
- - run `verifyGit()` which has a similar algorithm to 
+ - run `verifyGit()` which has a similar algorithm to
     `npm ls` and will verify that node_modules & package.json
     agree for all git links.
 
@@ -237,13 +237,13 @@ Options:
 
 ## Installation
 
-For usage with npm@1
+For usage with npm@2
 
 `npm install npm-shrinkwrap`
 
-For usage with npm@2
+For usage with npm@1
 
-`npm install npm-shrinkwrap@200.x`
+`npm install npm-shrinkwrap@100.x`
 
 ## Tests
 
