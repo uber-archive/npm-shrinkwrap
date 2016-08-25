@@ -86,7 +86,7 @@ function validateExcess(dir, file, shrinkwrap, opts, scope, cb) {  // jshint ign
 
     // the file is in excess if it does not exist in the package.json's
     // regular dependencies
-    if (lowercaseContains(Object.keys(shrinkwrap.dependencies), file)) {
+    if (shrinkwrap.dependencies && lowercaseContains(Object.keys(shrinkwrap.dependencies), file)) {
         return cb();
     }
 
