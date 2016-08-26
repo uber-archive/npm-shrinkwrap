@@ -1,6 +1,6 @@
 # npm-shrinkwrap
 
-A consistent shrinkwrap tool
+A consistent shrinkwrap tool **Note: npm >= 3 is currently not supported.**
 
 ## Usage
 
