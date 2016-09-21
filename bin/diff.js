@@ -125,7 +125,7 @@ function main(opts, callback) {
 
     parallel([
         isFile(fileA) ?
-            readJSON.bind(null, path.resolved(cwd, fileA)) :
+            readJSON.bind(null, path.resolve(cwd, fileA)) :
             gitShow.bind(null, fileA, cwd),
         isFile(fileB) ?
             readJSON.bind(null, path.resolve(cwd, fileB)) :
