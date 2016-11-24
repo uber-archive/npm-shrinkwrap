@@ -128,12 +128,11 @@ function isGitUrl (url) {
 function parseVersion(tag) {
     var char = tag[0];
 
-    if (char !== 'v') {
-        return null;
+    if (char === 'v') {
+        tag = tag.substr(1);
     }
 
-    var rest = tag.substr(1);
-    var isValid = validSemver(rest);
+    var isValid = validSemver(tag);
 
-    return isValid ? rest : null;
+    return isValid ? tag : null;
 }
