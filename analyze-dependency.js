@@ -129,7 +129,7 @@ function parseVersion(tag) {
     var char = tag[0];
 
     if (char !== 'v') {
-        return null;
+        return validSemver(tag);
     }
 
     var rest = tag.substr(1);
