@@ -75,11 +75,8 @@ function main(opts, callback) {
                 'into node_modules');
         });
     } else if (command === 'check') {
-        // Otherwise, we check to see if any erroneous dependencies are
-        // installed.
-        //
         // We set opts.dry to true, which suppresses all side effects in the
-        // shrinkShrinkwrap routine.
+        // syncShrinkwrap routine.
         opts.dry = true;
 
         return syncShrinkwrap(opts, function (err, errorReport) {
@@ -119,7 +116,7 @@ function main(opts, callback) {
             }
 
             console.log('npm-shrinkwrap.json is in sync ' +
-                'with package.json');
+                'with package.json and node_modules');
         });
     }
 
