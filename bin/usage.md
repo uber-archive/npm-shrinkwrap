@@ -34,6 +34,18 @@ Options:
 
  - `--dirname` defaults to `process.cwd()`
 
+## `{cmd} check`
+
+Asserts that your `npm-shrinkwrap.json` file and node_modules
+  directory are in sync. If any excess modules are in your
+  node_modules folder, `check` will return an error and print
+  a list of the excess dependencies that are installed.
+
+Options:
+    --dirname   sets the directory of the npm-shrinkwrap.json
+
+ - `--dirname` defaults to `process.cwd()`
+
 ## `{cmd} install`
 
 Will write a `shrinkwrap` script to your `package.json` file.

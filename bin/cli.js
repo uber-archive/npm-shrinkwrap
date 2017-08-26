@@ -74,6 +74,53 @@ function main(opts, callback) {
             console.log('synced npm-shrinkwrap.json ' +
                 'into node_modules');
         });
+    } else if (command === 'check') {
+        // Otherwise, we check to see if any erroneous dependencies are
+        // installed.
+        //
+        // We set opts.dry to true, which suppresses all side effects in the
+        // shrinkShrinkwrap routine.
+        opts.dry = true;
+
+        return syncShrinkwrap(opts, function (err, errorReport) {
+            if (callback) {
+                return callback(err, errorReport);
+            }
+
+            if (err) {
+                if (errorReport === undefined) {
+                    console.log('error', err);
+                    console.error('stack', new Error().stack);
+                    throw err;
+                }
+
+                if (errorReport.excessPackageJsonDependencies !== null &&
+                    errorReport.excessPackageJsonDependencies.length !== 0) {
+                    console.error('package.json has dependencies that are ' +
+                        'not present in npm-shrinkwrap.json');
+                    console.log(errorReport.excessPackageJsonDependencies);
+                }
+
+                if (errorReport.excessShrinkwrapDependencies !== null &&
+                    errorReport.excessShrinkwrapDependencies.length !== 0) {
+                    console.error('npm-shrinkwrap.json has dependencies that are ' +
+                        'not present in package.json');
+                    console.log(errorReport.excessShrinkwrapDependencies);
+                }
+
+                if (errorReport.erroneouslyInstalledDependencies !== null &&
+                    errorReport.erroneouslyInstalledDependencies.length !== 0) {
+                    console.error('npm-shrinkwrap.json is out of sync ' +
+                        'with node_modules');
+                    console.log(errorReport.erroneouslyInstalledDependencies);
+                }
+
+                return process.exit(1);
+            }
+
+            console.log('npm-shrinkwrap.json is in sync ' +
+                'with package.json');
+        });
     }
 
     shrinkwrap(opts, function (err, warnings) {

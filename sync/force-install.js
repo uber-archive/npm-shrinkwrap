@@ -20,7 +20,9 @@ function forceInstall(nodeModules, shrinkwrap, opts, cb) {
 
     // if no dependencies object then terminate recursion
     if (shrinkwrap.name && !shrinkwrap.dependencies) {
-        return purgeExcess(nodeModules, shrinkwrap, opts, cb);
+        return purgeExcess(nodeModules, shrinkwrap, opts, function(err, results) {
+            cb(err, results || []);
+        });
     }
 
     var deps = shrinkwrap.dependencies;
@@ -46,7 +48,7 @@ function forceInstall(nodeModules, shrinkwrap, opts, cb) {
         opts.dev = false;
 
         // remove purgeExcess result
-        results.pop();
+        var excess = results.pop();
 
         var incorrects = results.filter(function (dep) {
             return !dep.correct;
@@ -78,7 +80,6 @@ function forceInstall(nodeModules, shrinkwrap, opts, cb) {
             var name = correct.name;
             var folder = path.join(nodeModules, name,
                 'node_modules');
-
             return forceInstall.bind(
                 null, folder, correct, opts);
         });
@@ -90,7 +91,20 @@ function forceInstall(nodeModules, shrinkwrap, opts, cb) {
 
         var tasks = [].concat(inCorrectTasks, correctTasks);
 
-        parallel(tasks, cb);
+        parallel(tasks, function(err, results) {
+            if (err) {
+                return cb(err);
+            }
+
+            // Results is an array of arrays representing the excess
+            // installed dependencies of our children.
+            var flattened = [].concat.apply([], results);
+
+            /*
+                return the excess dependencies that may have been purged
+            */
+            cb(null, (excess || []).concat(flattened));
+        });
     });
 }
 

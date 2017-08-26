@@ -11,6 +11,11 @@ module.exports = installModule;
 
 */
 function installModule(nodeModules, dep, opts, cb) {
+    // Suppress side-effects if running `check`
+    if (opts.dry === true) {
+        return cb(null, dep);
+    }
+
     var where = path.join(nodeModules, '..');
 
     console.log('installing ', where, dep.resolved);

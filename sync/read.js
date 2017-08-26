@@ -12,7 +12,7 @@ var FileNotFound = TypedError({
 module.exports = {
     shrinkwrap: readShrinkwrap,
     package: readPackage,
-    devDependencies: readDevDependencies
+    dependencies: readDependencies
 };
 
 function readPackage(dirname, cb) {
@@ -33,12 +33,15 @@ function readShrinkwrap(dirname, cb) {
     });
 }
 
-function readDevDependencies(dirname, cb) {
+function readDependencies(dirname, cb) {
     readPackage(dirname, function (err, json) {
         if (err) {
             return cb(err);
         }
 
-        cb(null, json.devDependencies);
+        cb(null, {
+            dependencies: json.dependencies,
+            devDependencies: json.devDependencies
+        });
     });
 }

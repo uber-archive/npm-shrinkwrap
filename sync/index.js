@@ -36,19 +36,64 @@ function syncShrinkwrap(opts, cb) {
 
         parallel({
             shrinkwrap: read.shrinkwrap.bind(null, dirname),
-            devDependencies: read.devDependencies.bind(null, dirname)
+            dependencies: read.dependencies.bind(null, dirname)
         }, function (err, tuple) {
             if (err) {
                 return cb(err);
             }
 
             var nodeModules = path.join(dirname, 'node_modules');
+            var dependencies = tuple.dependencies;
             var shrinkwrap = tuple.shrinkwrap;
-            shrinkwrap.devDependencies = tuple.devDependencies;
+
+            // first, we check that package.json dependencies and shrinkwrap
+            // top-level dependencies are in sync. this should cover the case
+            // where a dependency was added or removed to package.json, but
+            // shrinkwrap was not subsequently run.
+            var packageJsonDependencies =
+                Object.keys(dependencies.dependencies);
+            var shrinkwrapTopLevelDependencies =
+                Object.keys(shrinkwrap.dependencies);
+
+            var excessPackageJsonDependencies = packageJsonDependencies
+                .filter(function (x) {
+                    return shrinkwrapTopLevelDependencies.indexOf(x) === -1;
+                });
+            var excessShrinkwrapDependencies = shrinkwrapTopLevelDependencies
+                .filter(function (x) {
+                    return packageJsonDependencies.indexOf(x) === -1;
+                });
+
+            shrinkwrap.devDependencies = tuple.dependencies.devDependencies;
 
             opts.dev = true;
 
-            forceInstall(nodeModules, shrinkwrap, opts, cb);
+            forceInstall(nodeModules, shrinkwrap, opts,
+                function(err, erroneousDependencies) {
+                    // If there is a legitimate error, or we are not running
+                    // `check`, bubble it up immediately
+                    if (err || opts.dry !== true) {
+                        return cb(err);
+                    }
+
+                    // Generate the error report
+                    if (erroneousDependencies.length !== 0 ||
+                        excessPackageJsonDependencies.length !== 0 ||
+                        excessShrinkwrapDependencies.length !== 0
+                    ) {
+                        return cb(
+                            new Error('npm-shrinkwrap.json is out of sync'),
+                            {
+                                excessPackageJsonDependencies:
+                                    excessPackageJsonDependencies,
+                                excessShrinkwrapDependencies:
+                                    excessShrinkwrapDependencies,
+                                erroneouslyInstalledDependencies:
+                                    erroneousDependencies,
+                            });
+                    }
+                    cb(null);
+                });
         });
     });
 }
