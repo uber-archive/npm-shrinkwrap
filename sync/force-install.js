@@ -1,5 +1,6 @@
 var path = require('path');
 var url = require('url');
+var flatten = require('array-flatten');
 var parallel = require('run-parallel');
 var series = require('run-series');
 var template = require('string-template');
@@ -69,7 +70,6 @@ function forceInstall(nodeModules, shrinkwrap, opts, cb) {
             var name = incorrect.name;
             var folder = path.join(nodeModules,
                 name, 'node_modules');
-
             return series.bind(null, [
                 installModule.bind(
                     null, nodeModules, incorrect, opts),
@@ -98,7 +98,7 @@ function forceInstall(nodeModules, shrinkwrap, opts, cb) {
 
             // Results is an array of arrays representing the excess
             // installed dependencies of our children.
-            var flattened = [].concat.apply([], results);
+            var flattened = flatten(results);
 
             /*
                 return the excess dependencies that may have been purged
