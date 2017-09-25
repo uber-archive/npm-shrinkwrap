@@ -86,7 +86,7 @@ function setResolved(opts, callback) {
         }
 
         if (rewriteFrom && json.from) {
-            json.from = rewriteFrom(json.from);
+            json.from = rewriteFrom(json.from, json.resolved);
         }
 
         if (json.dependencies) {
