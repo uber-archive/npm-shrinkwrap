@@ -34,6 +34,7 @@ function setResolved(opts, callback) {
     var createUri = opts.createUri || defaultCreateUri;
     var registries = opts.registries || ['registry.npmjs.org'];
     var rewriteResolved = opts.rewriteResolved || null;
+    var rewriteFrom = opts.rewriteFrom || null;
 
     readJSON(shrinkwrapFile, onjson);
 
@@ -82,6 +83,10 @@ function setResolved(opts, callback) {
 
         if (rewriteResolved && json.resolved) {
             json.resolved = rewriteResolved(json.resolved);
+        }
+
+        if (rewriteFrom && json.from) {
+            json.from = rewriteFrom(json.from);
         }
 
         if (json.dependencies) {
