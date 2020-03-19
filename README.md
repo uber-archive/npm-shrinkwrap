@@ -1,5 +1,7 @@
 # npm-shrinkwrap
 
+(This project is deprecated and not maintained.)
+
 A consistent shrinkwrap tool **Note: npm >= 3 is currently not supported.**
 
 ## Usage
