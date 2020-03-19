@@ -11,6 +11,15 @@ module.exports = installModule;
 
 */
 function installModule(nodeModules, dep, opts, cb) {
+    // Suppress side-effects if running `check`
+    if (opts.dry === true) {
+        if (dep.correct === false) {
+            var folder = path.join(nodeModules, dep.name);
+            return cb(null, folder + ' has the wrong version ' + dep.version);
+        }
+        return cb(null);
+    }
+
     var where = path.join(nodeModules, '..');
 
     console.log('installing ', where, dep.resolved);

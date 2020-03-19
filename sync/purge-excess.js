@@ -28,6 +28,13 @@ function purgeExcess(dir, shrinkwrap, opts, cb) {
 
         var tasks = excessFiles.map(function (file) {
             var filePath = path.join(dir, file);
+
+            // Suppress side-effects if running `check`
+            if (opts.dry === true) {
+                return function (cb) {
+                    return cb(null, filePath);
+                };
+            }
             console.log('removing', filePath);
             return rimraf.bind(null, filePath);
         });
