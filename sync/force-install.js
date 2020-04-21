@@ -104,7 +104,8 @@ function isCorrect(filePath, dep, opts, cb) {
     var resolvedUri = url.parse(dep.resolved);
 
     if (resolvedUri.protocol === 'http:' ||
-        resolvedUri.protocol === 'https:'
+        resolvedUri.protocol === 'https:' ||
+        resolvedUri.protocol === 'file:'
     ) {
         return isCorrectVersion(filePath, dep, cb);
     } else if (resolvedUri.protocol === 'git:' ||

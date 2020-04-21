@@ -102,6 +102,10 @@ function parseTag(value) {
         };
     }
 
+    if (uri.protocol === 'file:') {
+        return null;
+    }
+
     // support github
     var parts = value.split('/');
     if (parts.length === 2) {

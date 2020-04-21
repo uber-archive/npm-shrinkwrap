@@ -75,6 +75,29 @@ function gitSSHModuleFixture(name, version, opts) {
     return module;
 }
 
+function fileModuleFixture(name, version, path, opts) {
+    opts = opts || {};
+
+    var module = {
+        'package.json': JSON.stringify({
+            name: name,
+            _id: name + '@' + version,
+            _from: path,
+            _resolved: 'file:' + path,
+            version: version,
+            dependencies: opts.dependencies ?
+                opts.dependencies : undefined
+        })
+    };
+
+    /*jshint camelcase: false*/
+    if (opts.node_modules) {
+        module.node_modules = opts.node_modules;
+    }
+
+    return module;
+}
+
 test('npmShrinkwrap is a function', function (assert) {
     assert.strictEqual(typeof npmShrinkwrap, 'function');
     assert.end();
@@ -148,6 +171,45 @@ test('create shrinkwrap for git dep', fixtures(__dirname, {
         });
     });
 }));
+
+test('create shrinkwrap for file dep', fixtures(__dirname, {
+    'proj': Object.assign(moduleFixture('proj', '0.1.0', {
+        dependencies: {
+            bar: 'file:file-deps/bar'
+        },
+        'node_modules': {
+            'bar': fileModuleFixture('bar', '2.0.0', 'file-deps/bar')
+        }
+    }), {
+        'file-deps': {
+            'bar': moduleFixture('bar', '2.0.0')
+        }
+    })
+}, function (assert) {
+    npmShrinkwrap(PROJ, function (err) {
+        assert.ifError(err);
+
+        var shrinkwrap = path.join(PROJ, 'npm-shrinkwrap.json');
+        fs.readFile(shrinkwrap, 'utf8', function (err, file) {
+            assert.ifError(err);
+            assert.notEqual(file, '');
+
+            var json = JSON.parse(file);
+
+            assert.equal(json.name, 'proj');
+            assert.equal(json.version, '0.1.0');
+            assert.deepEqual(json.dependencies, {
+                bar: {
+                    version: '2.0.0',
+                    resolved: 'file:file-deps/bar'
+                }
+            });
+
+            assert.end();
+        });
+    });
+}));
+
 
 test('create shrinkwrap for git+ssh dep', fixtures(__dirname, {
     'proj': moduleFixture('proj', '0.1.0', {
