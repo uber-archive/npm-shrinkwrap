@@ -19,7 +19,7 @@
     "json-diff": "^0.3.1",
     "minimist": "^1.1.0",
     "msee": "^0.1.1",
-    "npm": "^2.15.10",
+    "npm": "^6.14.6",
     "rimraf": "^2.2.8",
     "run-parallel": "^1.1.6",
     "run-series": "^1.0.2",
